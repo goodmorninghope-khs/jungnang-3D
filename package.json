@@ -1,0 +1,8 @@
+{
+  "name": "jungnang-redevelopment-3d",
+  "version": "2.0.0",
+  "private": true,
+  "scripts": { "start": "serve . -l tcp://0.0.0.0:${PORT:-3000}" },
+  "dependencies": { "serve": "^14.2.4" },
+  "engines": { "node": ">=18" }
+}

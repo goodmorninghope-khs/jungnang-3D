@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="color-scheme" content="light">
+<title>중랑 정비지도 3D</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+KR:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="vendor/maplibre-gl.css">
+<style>
+:root{
+  --ink:#1B2430; --ink2:#55616D; --ink3:#8A96A1; --panel:#FFFFFF; --line:#E2E7EB; --chip:#F2F5F7;
+  --shadow:0 6px 24px rgba(27,36,48,.18); --accent:#5B3FD6; --done:#1B2430;
+  --low:#E6D6BC; --high:#9FB0C2;
+}
+*,*::before,*::after{box-sizing:border-box}
+html,body{height:100%;margin:0}
+body{background:#E8ECEF;color:var(--ink);font-family:"IBM Plex Sans KR","Apple SD Gothic Neo","Malgun Gothic",system-ui,sans-serif;font-size:14px;line-height:1.5;overflow:hidden;-webkit-font-smoothing:antialiased}
+button{font:inherit;color:inherit}
+.app{position:relative;height:100%;display:flex;flex-direction:column}
+
+.top{position:relative;z-index:20;background:var(--panel);border-bottom:1px solid var(--line);padding:10px 12px 8px;padding-top:calc(10px + env(safe-area-inset-top,0px))}
+.brand{display:flex;align-items:baseline;flex-wrap:wrap;gap:4px 10px;margin:0 4px 8px}
+.brand h1{font-size:18px;font-weight:700;margin:0;letter-spacing:-.02em}
+.brand span{font-size:12px;color:var(--ink3)}
+.brand strong{font-size:12px;font-weight:600;color:var(--ink2)}
+.row{display:flex;gap:6px;overflow-x:auto;scrollbar-width:none;padding:2px 4px}
+.row::-webkit-scrollbar{display:none}
+.row+.row{margin-top:6px}
+.chip{flex:none;display:inline-flex;align-items:center;gap:6px;height:32px;padding:0 12px;border-radius:16px;border:1px solid var(--line);background:var(--panel);font-size:13px;font-weight:500;cursor:pointer;white-space:nowrap;color:var(--ink2)}
+.chip b{font-weight:600;color:var(--ink3);font-size:12px}
+.chip .sw{width:10px;height:10px;border-radius:3px}
+.chip[aria-pressed="true"]{color:var(--ink);border-color:var(--ink);background:var(--chip)}
+.chip[aria-pressed="false"]{opacity:.55}
+.chip.all{font-weight:600}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.st-sw{width:14px;height:10px;border-radius:2px}
+.st-done{background:var(--done)}
+.st-fixed{background:var(--accent)}
+.st-pending{border:1.5px dashed var(--accent);background:color-mix(in srgb,var(--accent) 22%,transparent)}
+.st-plan{border:1.5px dotted var(--ink3)}
+.st-stalled{background:repeating-linear-gradient(45deg,var(--ink3) 0 2px,transparent 2px 4px);border:1px solid var(--ink3)}
+.st-dropped{background:var(--ink3);opacity:.45}
+
+.stage{position:relative;flex:1;overflow:hidden}
+#map{position:absolute;inset:0}
+.maplibregl-ctrl-attrib{font-size:10px}
+
+/* 마커 */
+.mk{border:0;padding:0;background:none;cursor:pointer;display:flex;flex-direction:column;align-items:center}
+.mk .pill{display:flex;align-items:center;gap:5px;height:26px;padding:0 9px 0 6px;border-radius:13px;font-size:12px;font-weight:600;white-space:nowrap;box-shadow:0 2px 6px rgba(27,36,48,.25);border:1.5px solid var(--c);background:var(--c);color:#fff}
+.mk .ic{width:15px;height:15px;border-radius:50%;background:#fff;color:var(--c);font-size:9px;font-weight:700;display:grid;place-items:center;flex:none}
+.mk .tail{width:0;height:0;border-left:5px solid transparent;border-right:5px solid transparent;border-top:6px solid var(--c);margin-top:-1px}
+.mk .sub{font-weight:500;opacity:.85;font-size:11px}
+.mk.pending .pill,.mk.plan .pill{background:var(--panel);color:var(--c);border-style:dashed}
+.mk.plan .pill{border-style:dotted}
+.mk.pending .ic,.mk.plan .ic{background:var(--c);color:#fff}
+.mk.done .pill{background:var(--done);border-color:var(--done)}
+.mk.done .tail{border-top-color:var(--done)}
+.mk.done .ic{background:var(--c);color:#fff}
+.mk.stalled .pill{background:var(--panel);color:var(--ink2);border-color:var(--ink3);border-style:dashed}
+.mk.stalled .tail{border-top-color:var(--ink3)}
+.mk.stalled .ic{background:var(--ink3);color:var(--panel)}
+.mk.dropped .pill{background:var(--chip);border-color:var(--ink3);color:var(--ink3);text-decoration:line-through;box-shadow:none}
+.mk.dropped .tail{border-top-color:var(--ink3)}
+.mk.dropped .ic{background:var(--ink3);color:var(--panel)}
+.mk.sel .pill{box-shadow:0 0 0 3px #fff,0 0 0 5px var(--c),0 4px 12px rgba(27,36,48,.3)}
+.mk.dim{opacity:.3}
+.compact .mk .nm,.compact .mk .sub{display:none}
+.compact .mk .pill{padding:0 4px;gap:0;height:24px}
+.compact .mk.sel .nm{display:inline;margin-left:5px}
+.compact .mk.sel .pill{padding:0 9px 0 4px}
+.dongl{font-size:12px;font-weight:600;color:#6B7680;letter-spacing:.06em;text-shadow:0 0 3px #fff,0 0 3px #fff,0 0 6px #fff;pointer-events:none;white-space:nowrap}
+.far .mk .sub{display:none}
+.near .dongl{display:none}
+
+/* 컨트롤 */
+.ctl{position:absolute;right:12px;top:12px;display:flex;flex-direction:column;gap:6px;z-index:6}
+.fab{min-width:44px;height:40px;padding:0 8px;border-radius:10px;border:1px solid var(--line);background:var(--panel);box-shadow:var(--shadow);font-size:12px;font-weight:600;cursor:pointer;display:grid;place-items:center}
+.fab.big{font-size:18px}
+.fab[aria-pressed="true"]{background:var(--ink);color:var(--panel);border-color:var(--ink)}
+.bottom{position:absolute;left:50%;transform:translateX(-50%);bottom:calc(28px + env(safe-area-inset-bottom,0px));z-index:6;display:flex;gap:8px}
+.pbtn{height:42px;padding:0 18px;border-radius:21px;border:0;background:var(--ink);color:var(--panel);font-weight:600;box-shadow:var(--shadow);cursor:pointer;white-space:nowrap}
+.pbtn.alt{background:var(--panel);color:var(--ink);border:1px solid var(--line)}
+
+.legend{position:absolute;left:12px;top:12px;z-index:5;background:color-mix(in srgb,var(--panel) 92%,transparent);border:1px solid var(--line);border-radius:10px;padding:8px 10px;font-size:11px;color:var(--ink2);box-shadow:var(--shadow);max-width:230px}
+.legend b{display:block;font-size:11px;color:var(--ink);margin-bottom:4px}
+.ramp{height:8px;border-radius:4px;background:linear-gradient(90deg,var(--low),#D8D9D6,var(--high));margin:2px 0}
+.rl{display:flex;justify-content:space-between;color:var(--ink3)}
+.vol{display:flex;align-items:center;gap:6px;margin-top:6px}
+.vol i{width:14px;height:12px;border-radius:2px;background:var(--accent);opacity:.8}
+.vol i.g{opacity:.3;border:1px dashed var(--accent)}
+.legend .lx{position:absolute;right:4px;top:2px;border:0;background:none;color:var(--ink3);cursor:pointer;font-size:14px;width:28px;height:28px}
+
+/* 투어 카드 */
+.tour{position:absolute;left:50%;transform:translateX(-50%);bottom:calc(84px + env(safe-area-inset-bottom,0px));z-index:25;width:min(460px,calc(100% - 24px));background:var(--ink);color:#fff;border-radius:14px;padding:14px 16px 12px;box-shadow:var(--shadow);display:none}
+.tour.on{display:block}
+.tour small{color:#AEB9C3;font-size:11px}
+.tour h3{margin:2px 0 4px;font-size:16px}
+.tour p{margin:0 0 10px;font-size:13px;color:#DCE3E9}
+.tour .tb{display:flex;gap:6px;justify-content:flex-end}
+.tour button{height:34px;padding:0 12px;border-radius:8px;border:1px solid #3A4654;background:#27313A;color:#fff;cursor:pointer;font-size:12px;font-weight:600}
+.tour .bar{height:2px;background:#3A4654;border-radius:1px;margin-bottom:10px;overflow:hidden}
+.tour .bar i{display:block;height:100%;background:#fff;width:0}
+
+/* 팝오버 */
+.pop{position:absolute;z-index:30;right:68px;top:12px;width:352px;max-width:calc(100% - 24px);background:var(--panel);border-radius:14px;box-shadow:var(--shadow);border:1px solid var(--line);padding:16px;display:none;max-height:calc(100% - 24px);overflow:auto}
+.pop.on{display:block}
+.pop .x{position:absolute;right:8px;top:8px;width:36px;height:36px;border:0;background:none;font-size:20px;color:var(--ink3);cursor:pointer;border-radius:8px}
+.tag{display:inline-flex;align-items:center;gap:5px;font-size:12px;font-weight:600;padding:2px 8px;border-radius:6px;background:color-mix(in srgb,var(--c) 14%,transparent);color:var(--c)}
+.sbadge{font-size:12px;font-weight:600;padding:2px 8px;border-radius:6px;background:var(--chip);color:var(--ink2);margin-left:4px}
+.vbadge{font-size:11px;font-weight:600;padding:2px 7px;border-radius:6px;margin-left:4px;border:1px solid var(--line);color:var(--ink3)}
+.vbadge.ok{color:var(--accent);border-color:color-mix(in srgb,var(--accent) 40%,transparent)}
+.pop h2{font-size:18px;margin:8px 36px 2px 0;letter-spacing:-.02em;line-height:1.35}
+.addr{color:var(--ink3);font-size:12px;margin:0}
+.steps{display:flex;margin:14px 0 4px;position:relative}
+.steps::before{content:"";position:absolute;left:7px;right:7px;top:6px;height:2px;background:var(--line)}
+.stp{flex:1;display:flex;flex-direction:column;align-items:center;position:relative;min-width:0}
+.stp i{width:14px;height:14px;border-radius:50%;background:var(--panel);border:2px solid var(--line);z-index:1}
+.stp.p i{background:var(--c);border-color:var(--c)}
+.stp.cur i{box-shadow:0 0 0 4px color-mix(in srgb,var(--c) 25%,transparent)}
+.stp span{font-size:10px;color:var(--ink3);margin-top:4px;text-align:center;line-height:1.25;word-break:keep-all}
+.stp.cur span{color:var(--ink);font-weight:600}
+.steps.x .stp i{border-color:var(--ink3);background:var(--panel)}
+.facts{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:14px 0}
+.fact{background:var(--chip);border-radius:8px;padding:8px}
+.fact small{display:block;font-size:11px;color:var(--ink3)}
+.fact strong{font-size:14px;font-weight:600}
+.tl{margin:4px 0 10px;padding:0;list-style:none}
+.tl li{position:relative;padding:0 0 8px 16px}
+.tl li::before{content:"";position:absolute;left:3px;top:7px;width:7px;height:7px;border-radius:50%;background:var(--c)}
+.tl li.nx::before{background:var(--panel);border:1.5px solid var(--c);width:5px;height:5px}
+.tl small{display:block;color:var(--ink3);font-size:11px}
+.tl strong{font-size:14px;font-weight:600}
+.pop p.body{margin:0 0 10px;color:var(--ink2);font-size:13px}
+.pb{background:var(--chip);border-radius:8px;padding:8px 10px;margin:0 0 10px;font-size:12px;color:var(--ink2)}
+.pb b{display:block;font-size:11px;color:var(--ink3);font-weight:600;margin-bottom:2px}
+.src{font-size:11px;color:var(--ink3);margin:0}
+
+.sheet{position:absolute;left:0;right:0;bottom:0;z-index:40;background:var(--panel);border-radius:16px 16px 0 0;box-shadow:var(--shadow);max-height:72%;display:flex;flex-direction:column;transform:translateY(105%);transition:transform .25s ease;padding-bottom:env(safe-area-inset-bottom,0px)}
+.sheet.on{transform:none}
+.sh-h{display:flex;align-items:center;justify-content:space-between;padding:14px 16px 8px}
+.sh-h h3{margin:0;font-size:16px}
+.sh-b{overflow:auto;padding:0 8px 16px}
+.grp{font-size:12px;font-weight:600;color:var(--ink3);padding:12px 8px 4px}
+.li{display:flex;width:100%;text-align:left;gap:10px;align-items:center;padding:10px 8px;border:0;background:none;border-radius:10px;cursor:pointer}
+.li:hover{background:var(--chip)}
+.li .d{width:10px;height:10px;border-radius:3px;flex:none;background:var(--c)}
+.li .n{flex:1;min-width:0}
+.li .n b{display:block;font-weight:600;font-size:14px}
+.li .n small{color:var(--ink3);font-size:12px}
+.li .u{font-size:12px;color:var(--ink2);white-space:nowrap}
+.empty{padding:24px;text-align:center;color:var(--ink3)}
+.toast{position:absolute;left:50%;top:12px;transform:translateX(-50%);z-index:50;background:var(--ink);color:#fff;border-radius:10px;padding:8px 14px;font-size:12px;box-shadow:var(--shadow);display:none;max-width:calc(100% - 24px)}
+.toast.on{display:block}
+
+@media (max-width:720px){
+  .pop{left:0;right:0;bottom:0;top:auto;width:auto;max-width:none;border-radius:16px 16px 0 0;max-height:62%;padding-bottom:calc(16px + env(safe-area-inset-bottom,0px))}
+  .legend{max-width:180px;padding:6px 8px}
+  .legend .opt{display:none}
+}
+@media (prefers-reduced-motion:reduce){.sheet{transition:none}}
+</style>
+</head>
+<body>
+<div class="app">
+  <header class="top">
+    <div class="brand"><h1>중랑 정비지도 3D</h1><span id="meta"></span><strong id="sum"></strong></div>
+    <div class="row" id="typeRow" role="group" aria-label="사업 종류"></div>
+    <div class="row" id="statRow" role="group" aria-label="진행 상태"></div>
+  </header>
+  <main class="stage" id="stage">
+    <div id="map" aria-label="중랑구 정비사업 3D 지도"></div>
+    <aside class="legend" id="legend">
+      <button class="lx" id="legX" aria-label="범례 닫기">×</button>
+      <b>지금 서 있는 건물</b>
+      <div class="ramp"></div>
+      <div class="rl"><span>빌라·주택</span><span>아파트</span></div>
+      <div class="opt">
+        <div class="vol"><i></i>확정된 계획 높이</div>
+        <div class="vol"><i class="g"></i>아직 확정 전</div>
+      </div>
+    </aside>
+    <div class="ctl">
+      <button class="fab" id="future" aria-pressed="true" aria-label="계획 높이 보기">계획</button>
+      <button class="fab" id="tilt" aria-pressed="true" aria-label="입체 기울기 전환">3D</button>
+      <button class="fab big" id="zin" aria-label="확대">+</button>
+      <button class="fab big" id="zout" aria-label="축소">−</button>
+      <button class="fab" id="north" aria-label="북쪽으로 돌리기">북</button>
+      <button class="fab" id="home" aria-label="중랑구 전체 보기">전체</button>
+    </div>
+    <div class="bottom">
+      <button class="pbtn alt" id="tourBtn">동네 투어</button>
+      <button class="pbtn" id="listbtn">목록 보기</button>
+    </div>
+    <section class="tour" id="tour" aria-live="polite">
+      <div class="bar"><i id="tourBar"></i></div>
+      <small id="tourStep"></small><h3 id="tourTitle"></h3><p id="tourText"></p>
+      <div class="tb"><button id="tourPrev">이전</button><button id="tourNext">다음</button><button id="tourStop">투어 끝내기</button></div>
+    </section>
+    <section class="pop" id="pop" role="dialog" aria-modal="false"></section>
+    <section class="sheet" id="sheet" aria-label="사업 목록">
+      <div class="sh-h"><h3 id="shTitle">사업 목록</h3><button class="fab big" id="shClose" aria-label="목록 닫기">×</button></div>
+      <div class="sh-b" id="shBody"></div>
+    </section>
+    <div class="toast" id="toast" role="status"></div>
+  </main>
+</div>
+<script src="vendor/maplibre-gl.js"></script>
+<script src="data.js"></script>
+<script src="app.js"></script>
+</body>
+</html>
