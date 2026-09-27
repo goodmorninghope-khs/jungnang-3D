@@ -35,14 +35,15 @@ function heightM(d){
   const f=d.f||Math.min(35,Math.round(12+Math.sqrt(d.u||(d.ar||20000)/45)*.35));
   return f*3.2;
 }
+function shade(hex,k){const n=parseInt(hex.slice(1),16);return '#'+[16,8,0].map(b=>Math.round(((n>>b)&255)*k).toString(16).padStart(2,'0')).join('')}
 const ZONES={type:'FeatureCollection',features:D.map(d=>{
   const T=TYPES[d.t], c=(d.s==='stalled'||d.s==='dropped')?GREY:T.c;
-  return {type:'Feature',id:D.indexOf(d),properties:{id:d.id,t:d.t,s:d.s,c,h:heightM(d)},geometry:{type:'Polygon',coordinates:[footprint(d)]}};
+  return {type:'Feature',id:D.indexOf(d),properties:{id:d.id,t:d.t,s:d.s,c,cd:shade(c,.55),h:heightM(d)},geometry:{type:'Polygon',coordinates:[footprint(d)]}};
 })};
 
 /* ───── 필터 상태 ───── */
 const fT=new Set(Object.keys(TYPES)), fS=new Set(Object.keys(STATS));
-let sel=null, showFuture=true, BOUNDARY=null, usedFallback=false;
+let sel=null, selX=null, showFuture=true, showPOI=true, showTrail=true, BOUNDARY=null, usedFallback=false;
 const vis=d=>fT.has(d.t)&&fS.has(d.s);
 const userF=()=>['all',['in',['get','t'],['literal',[...fT]]],['in',['get','s'],['literal',[...fS]]]];
 
@@ -80,12 +81,12 @@ function setupLayers(){
     }catch(e){console.warn(e)}
   }
 
-  // 실제 건물: 높이에 따라 베이지(빌라·주택) → 청회색(아파트)
+  // 실제 건물: 높이에 따라 연베이지(빌라·주택) → 무채색 회색(아파트). 사업 색과 겹치지 않게 채도를 뺌
   if(hasOMT){
     layers.filter(l=>l['source-layer']==='building').forEach(l=>map.setLayoutProperty(l.id,'visibility','none'));
     const H=['coalesce',['get','render_height'],['get','height'],7];
     map.addLayer({id:'bld3d',type:'fill-extrusion',source:'openmaptiles','source-layer':'building',minzoom:12.5,
-      paint:{'fill-extrusion-color':['interpolate',['linear'],H,0,'#EADCC3',12,'#E2D2B6',18,'#D8D9D6',30,'#B7C3CE',60,'#9AACBE'],
+      paint:{'fill-extrusion-color':['interpolate',['linear'],H,0,'#EFE9DF',12,'#E6DED2',18,'#DAD7D2',30,'#C9C8C5',60,'#B5B6B7'],
         'fill-extrusion-height':H,'fill-extrusion-base':['coalesce',['get','render_min_height'],0],'fill-extrusion-opacity':.9}},firstSymbol);
   }
 
@@ -104,11 +105,24 @@ function setupLayers(){
   map.addLayer({id:'z-fill',type:'fill',source:'zones',paint:{'fill-color':['get','c'],'fill-opacity':.22}});
   map.addLayer({id:'z-line',type:'line',source:'zones',paint:{'line-color':['get','c'],'line-width':2,'line-opacity':.9}});
   map.addLayer({id:'z-line-dash',type:'line',source:'zones',paint:{'line-color':['get','c'],'line-width':2,'line-opacity':.9,'line-dasharray':[2,1.5]}});
-  map.addLayer({id:'z-vol',type:'fill-extrusion',source:'zones',paint:{'fill-extrusion-color':['get','c'],'fill-extrusion-height':['get','h'],'fill-extrusion-base':0,'fill-extrusion-opacity':.8}});
-  map.addLayer({id:'z-ghost',type:'fill-extrusion',source:'zones',paint:{'fill-extrusion-color':['get','c'],'fill-extrusion-height':['get','h'],'fill-extrusion-base':0,'fill-extrusion-opacity':.3}});
-  map.addLayer({id:'z-sel',type:'fill-extrusion',source:'zones',paint:{'fill-extrusion-color':['get','c'],'fill-extrusion-height':['get','h'],'fill-extrusion-base':0,'fill-extrusion-opacity':.95}});
+  map.addLayer({id:'z-vol',type:'fill-extrusion',source:'zones',paint:{'fill-extrusion-color':['get','c'],'fill-extrusion-height':['get','h'],'fill-extrusion-base':0,'fill-extrusion-opacity':.88,'fill-extrusion-vertical-gradient':false}});
+  map.addLayer({id:'z-ghost',type:'fill-extrusion',source:'zones',paint:{'fill-extrusion-color':['get','c'],'fill-extrusion-height':['get','h'],'fill-extrusion-base':0,'fill-extrusion-opacity':.36,'fill-extrusion-vertical-gradient':false}});
+  map.addLayer({id:'z-sel',type:'fill-extrusion',source:'zones',paint:{'fill-extrusion-color':['get','c'],'fill-extrusion-height':['get','h'],'fill-extrusion-base':0,'fill-extrusion-opacity':.96,'fill-extrusion-vertical-gradient':false}});
+  map.addLayer({id:'z-cap',type:'fill-extrusion',source:'zones',paint:{'fill-extrusion-color':['get','cd'],'fill-extrusion-height':['+',['get','h'],1.2],'fill-extrusion-base':['get','h'],'fill-extrusion-opacity':.95,'fill-extrusion-vertical-gradient':false}});
   map.addLayer({id:'z-sel-line',type:'line',source:'zones',paint:{'line-color':'#1B2430','line-width':3}});
-  applyFilters();
+  // 중랑동행길: 흰 길에 짙은 테두리 (사업 색과 겹치지 않는 '길' 표기)
+  map.addSource('trail',{type:'geojson',data:TRAIL_GJ});
+  const TS=s=>['==',['get','s'],s];
+  map.addLayer({id:'tr-case',type:'line',source:'trail',layout:{'line-cap':'round','line-join':'round'},paint:{'line-color':'#0F172A','line-width':['interpolate',['linear'],['zoom'],12,4,16,9],'line-opacity':['case',TS('plan'),.55,.9]}});
+  map.addLayer({id:'tr-done',type:'line',source:'trail',filter:TS('done'),layout:{'line-cap':'round','line-join':'round'},paint:{'line-color':'#FFFFFF','line-width':['interpolate',['linear'],['zoom'],12,2,16,5]}});
+  map.addLayer({id:'tr-fix',type:'line',source:'trail',filter:TS('fix'),paint:{'line-color':'#FFD23F','line-width':['interpolate',['linear'],['zoom'],12,2,16,5],'line-dasharray':[1.6,1]}});
+  map.addLayer({id:'tr-plan',type:'line',source:'trail',filter:TS('plan'),layout:{'line-cap':'round'},paint:{'line-color':'#FFFFFF','line-width':['interpolate',['linear'],['zoom'],12,1.5,16,3.5],'line-dasharray':[.2,1.8]}});
+  map.addLayer({id:'tr-hit',type:'line',source:'trail',paint:{'line-color':'#000','line-width':18,'line-opacity':0}});
+  // 관계선: 선택한 사업·시장·명소·길에서 가까운 곳까지
+  map.addSource('rel',{type:'geojson',data:EMPTY});
+  map.addLayer({id:'rel-ring',type:'line',source:'rel',filter:['==',['get','k'],'ring'],paint:{'line-color':'#0F172A','line-width':1.5,'line-opacity':.6,'line-dasharray':[3,2]}});
+  map.addLayer({id:'rel-line',type:'line',source:'rel',filter:['==',['get','k'],'link'],layout:{'line-cap':'round'},paint:{'line-color':['get','c'],'line-width':2.5,'line-opacity':.9,'line-dasharray':[1,1.2]}});
+  applyFilters();applyOverlay();drawRel();
 }
 
 function applyFilters(){
@@ -124,9 +138,55 @@ function applyFilters(){
   map.setFilter('z-sel-line',['all',U,S]);
   const v=showFuture?'visible':'none';
   ['z-vol','z-ghost','z-sel'].forEach(id=>map.setLayoutProperty(id,'visibility',v));
-  map.setPaintProperty('z-vol','fill-extrusion-opacity',sel?.3:.8);
-  map.setPaintProperty('z-ghost','fill-extrusion-opacity',sel?.12:.3);
+  map.setFilter('z-cap',['all',U,solid,['>',['get','h'],0]]);
+  map.setLayoutProperty('z-cap','visibility',v);
+  map.setPaintProperty('z-vol','fill-extrusion-opacity',sel?.3:.88);
+  map.setPaintProperty('z-cap','fill-extrusion-opacity',sel?.3:.95);
+  map.setPaintProperty('z-ghost','fill-extrusion-opacity',sel?.12:.36);
   map.setPaintProperty('z-fill','fill-opacity',sel?.1:.22);
+}
+
+/* ───── 관계: 거리 계산 ───── */
+const R_NEAR=1000;   // 걸어서 15분 안팎
+const EMPTY={type:'FeatureCollection',features:[]};
+const TRAIL_GJ={type:'FeatureCollection',features:TRAIL.map(t=>({type:'Feature',properties:{id:t.id,s:t.s},geometry:{type:'LineString',coordinates:t.p}}))};
+const xy=(lng,lat)=>[lng*88190,lat*111000];
+function dist(a,b){const A=xy(a[0],a[1]),B=xy(b[0],b[1]);return Math.hypot(A[0]-B[0],A[1]-B[1])}
+function toLine(pt,line){ // 점에서 선까지 최단거리와 그 지점
+  let best=[Infinity,null];const P=xy(...pt);
+  for(let i=0;i<line.length-1;i++){const A=xy(...line[i]),B=xy(...line[i+1]),dx=B[0]-A[0],dy=B[1]-A[1];
+    const t=Math.max(0,Math.min(1,((P[0]-A[0])*dx+(P[1]-A[1])*dy)/(dx*dx+dy*dy||1))),Q=[A[0]+t*dx,A[1]+t*dy],d=Math.hypot(P[0]-Q[0],P[1]-Q[1]);
+    if(d<best[0])best=[d,[Q[0]/88190,Q[1]/111000]]}
+  return best;
+}
+const ll=d=>[d.lng,d.lat];
+const mStr=m=>m<1000?Math.round(m/10)*10+'m':(m/1000).toFixed(1)+'㎞';
+const walk=m=>Math.max(1,Math.round(m*1.25/67))+'분';   // 직선거리×1.25, 분속 67m
+const POIC={market:'#0F172A',place:'#475569'};
+function nearPOI(pt,r=R_NEAR){return POI.map(p=>({p,m:dist(pt,ll(p))})).filter(x=>x.m<=r).sort((a,b)=>a.m-b.m)}
+function nearProj(pt,r=R_NEAR){return D.filter(vis).map(d=>({d,m:dist(pt,ll(d))})).filter(x=>x.m<=r).sort((a,b)=>a.m-b.m)}
+function nearTrail(pt){let b={m:Infinity};TRAIL.forEach(t=>{const [m,q]=toLine(pt,t.p);if(m<b.m)b={m,q,t}});return b}
+function ring(pt,r){const c=[];for(let i=0;i<=64;i++){const a=i/64*2*Math.PI;c.push([pt[0]+r*Math.cos(a)/88190,pt[1]+r*Math.sin(a)/111000])}return c}
+const LN=(a,b,c)=>({type:'Feature',properties:{k:'link',c},geometry:{type:'LineString',coordinates:[a,b]}});
+function drawRel(){
+  const src=map.getSource&&map.getSource('rel'); if(!src)return;
+  const F=[];
+  if(sel){const d=D.find(x=>x.id===sel),o=ll(d),c=TYPES[d.t].c;
+    if(showPOI)nearPOI(o).slice(0,5).forEach(x=>F.push(LN(o,ll(x.p),c)));
+    if(showTrail){const t=nearTrail(o);if(t.m<=R_NEAR)F.push(LN(o,t.q,'#0F172A'))}
+  }else if(selX&&selX.k!=='trail'){const p=POI.find(x=>x.id===selX.id),o=ll(p);
+    F.push({type:'Feature',properties:{k:'ring'},geometry:{type:'LineString',coordinates:ring(o,R_NEAR)}});
+    nearProj(o).forEach(x=>F.push(LN(o,ll(x.d),TYPES[x.d.t].c)));
+  }else if(selX&&selX.k==='trail'){const t=TRAIL.find(x=>x.id===selX.id);
+    D.filter(vis).forEach(d=>{const [m,q]=toLine(ll(d),t.p);if(m<=500)F.push(LN(q,ll(d),TYPES[d.t].c))});
+    POI.forEach(p=>{const [m,q]=toLine(ll(p),t.p);if(m<=500)F.push(LN(q,ll(p),POIC[p.k]))});
+  }
+  src.setData({type:'FeatureCollection',features:F});
+}
+function applyOverlay(){
+  if(map.getLayer('tr-case'))['tr-case','tr-done','tr-fix','tr-plan','tr-hit'].forEach(id=>map.setLayoutProperty(id,'visibility',showTrail?'visible':'none'));
+  POI.forEach(p=>pk[p.id].getElement().style.display=showPOI?'':'none');
+  document.querySelectorAll('.trl').forEach(el=>el.style.display=showTrail?'':'none');
 }
 
 /* ───── 마커·동 이름 ───── */
@@ -139,9 +199,30 @@ D.forEach(d=>{
   b.addEventListener('click',e=>{e.stopPropagation();stopTour();open(d.id)});
   mk[d.id]=new maplibregl.Marker({element:b,anchor:'bottom'}).setLngLat([d.lng,d.lat]).addTo(map);
 });
+const pk={};
+POI.forEach(p=>{
+  const b=document.createElement('button');b.className='pk '+p.k;
+  b.setAttribute('aria-label',`${p.n}, ${p.k==='market'?'전통시장':'명소'}`);
+  b.innerHTML=`<span class="pb2"><span class="gl">${p.k==='market'?'市':'★'}</span><span class="nm">${p.sh}</span></span>`;
+  b.addEventListener('click',e=>{e.stopPropagation();stopTour();openX('poi',p.id)});
+  pk[p.id]=new maplibregl.Marker({element:b,anchor:'center'}).setLngLat(ll(p)).addTo(map);
+});
+TRAIL.forEach(t=>{
+  const m=t.p[Math.floor(t.p.length/2)], el=document.createElement('button');
+  el.className='trl '+t.s;el.innerHTML=`<i></i>${t.n.replace(/ \(.*\)/,'')}`;
+  el.addEventListener('click',e=>{e.stopPropagation();stopTour();openX('trail',t.id)});
+  new maplibregl.Marker({element:el,anchor:'center'}).setLngLat(m).addTo(map);
+});
+function trailKm(t){let s=0;for(let i=0;i<t.p.length-1;i++)s+=dist(t.p[i],t.p[i+1]);return s/1000}
 function ringCentroid(r){let A=0,x=0,y=0;for(let i=0;i<r.length-1;i++){const c=r[i][0]*r[i+1][1]-r[i+1][0]*r[i][1];A+=c;x+=(r[i][0]+r[i+1][0])*c;y+=(r[i][1]+r[i+1][1])*c}A/=2;return[x/(6*A),y/(6*A)]}
 function syncMarkers(){
-  D.forEach(d=>{const el=mk[d.id].getElement();el.style.display=vis(d)?'':'none';el.classList.toggle('sel',sel===d.id);el.classList.toggle('dim',!!sel&&sel!==d.id)});
+  let rel=null;   // 선택과 관계된 것만 또렷하게
+  if(sel){const o=ll(D.find(x=>x.id===sel));rel=new Set([sel,...nearPOI(o).slice(0,5).map(x=>x.p.id)])}
+  else if(selX&&selX.k==='poi'){const o=ll(POI.find(x=>x.id===selX.id));rel=new Set([selX.id,...nearProj(o).map(x=>x.d.id)])}
+  else if(selX&&selX.k==='trail'){const t=TRAIL.find(x=>x.id===selX.id);rel=new Set([...D.filter(d=>toLine(ll(d),t.p)[0]<=500).map(d=>d.id),...POI.filter(p=>toLine(ll(p),t.p)[0]<=500).map(p=>p.id)])}
+  D.forEach(d=>{const el=mk[d.id].getElement();el.style.display=vis(d)?'':'none';el.classList.toggle('sel',sel===d.id);el.classList.toggle('dim',!!rel&&!rel.has(d.id))});
+  POI.forEach(p=>{const el=pk[p.id].getElement();el.classList.toggle('sel',selX?.id===p.id);el.classList.toggle('dim',!!rel&&!rel.has(p.id));el.classList.toggle('hl',!!rel&&rel.has(p.id)&&selX?.id!==p.id)});
+  drawRel();
 }
 function zoomClasses(){const z=map.getZoom();stage.classList.toggle('compact',z<14.3);stage.classList.toggle('far',z<15.2);stage.classList.toggle('near',z>15.6)}
 map.on('zoom',zoomClasses);
@@ -190,20 +271,69 @@ function open(id,fly=true){
     <div class="facts">${facts}</div>${tl}
     <p class="body">${d.b}</p>
     ${d.pb?`<div class="pb"><b>기부채납 공공시설</b>${d.pb}</div>`:''}
+    ${relHTML(d)}
     <p class="src">출처: ${d.src}. 위치는 지번 기준 근사치이고, 구역 모양은 면적을 반영한 도식입니다.</p>`;
-  pop.querySelector('.x').onclick=close;
-  pop.classList.add('on'); $('sheet').classList.remove('on');
+  pop.querySelector('.x').onclick=close; bindRel();
+  selX=null; pop.classList.add('on'); $('sheet').classList.remove('on');
   syncMarkers(); applyFilters();
   if(fly)map.flyTo({center:[d.lng,d.lat],zoom:Math.max(map.getZoom(),15.6),pitch:60,bearing:map.getBearing(),
     offset:mobile()?[0,-Math.round(stage.clientHeight*.22)]:[-190,40],duration:1400,essential:true});
 }
-function close(){sel=null;pop.classList.remove('on');syncMarkers();applyFilters()}
+function close(){sel=null;selX=null;pop.classList.remove('on');syncMarkers();applyFilters()}
+function relHTML(d){
+  const o=ll(d), ps=nearPOI(o).slice(0,5), t=nearTrail(o);
+  const li=ps.map(x=>`<li data-x="poi:${x.p.id}"><span class="k ${x.p.k}">${x.p.k==='market'?'市':'★'}</span><b>${x.p.n}</b><em>${mStr(x.m)} · 걸어서 ${walk(x.m)}</em></li>`).join('');
+  const tr=t.m<=R_NEAR?`<li data-x="trail:${t.t.id}"><span class="k trail ${t.t.s}"></span><b>중랑동행길 ${t.t.n}</b><em>${mStr(t.m)} · ${t.t.when}</em></li>`:'';
+  if(!li&&!tr)return `<div class="rel"><b>반경 1㎞ 안 시장·명소</b><p class="none">가까운 전통시장·명소가 없습니다.</p></div>`;
+  return `<div class="rel"><b>반경 1㎞ 안 시장·명소·동행길</b><ul>${li}${tr}</ul></div>`;
+}
+function bindRel(){pop.querySelectorAll('.rel li[data-x]').forEach(li=>li.onclick=()=>{const [k,id]=li.dataset.x.split(':');openX(k,id)})}
+function openX(k,id){
+  sel=null; selX={k,id};
+  let html='',c='#0F172A',at;
+  if(k==='poi'){
+    const p=POI.find(x=>x.id===id); at=ll(p); c=POIC[p.k];
+    const ns=nearProj(at), u=ns.filter(x=>x.d.s!=='dropped').reduce((a,x)=>a+(x.d.u||0),0), t=nearTrail(at);
+    const by={};ns.forEach(x=>{by[x.d.t]=(by[x.d.t]||0)+1});
+    const mix=Object.entries(by).map(([t,n])=>`<span class="mx" style="--c:${TYPES[t].c}"><i></i>${TYPES[t].n} ${n}</span>`).join('');
+    html=`<span class="tag" style="--c:${c}">${p.k==='market'?'전통시장':'명소'}</span>
+      <h2>${p.n}</h2><p class="body">${p.b}</p>
+      <div class="facts"><div class="fact"><small>반경 1㎞ 사업</small><strong>${ns.length}곳</strong></div><div class="fact"><small>계획 세대</small><strong>${u?num(u):'—'}</strong></div><div class="fact"><small>동행길까지</small><strong>${mStr(t.m)}</strong></div></div>
+      ${p.k==='market'&&u?`<p class="lead">걸어서 15분 거리에 약 ${num(u)}세대가 새로 들어설 계획입니다. 공사 기간의 이주와 입주 뒤의 새 손님, 이 시장 상권이 겪을 두 번의 변화입니다.</p>`:''}
+      ${mix?`<div class="mix">${mix}</div>`:''}
+      <div class="rel"><b>가까운 정비사업</b><ul>${ns.map(x=>`<li data-x="proj:${x.d.id}"><span class="k" style="background:${TYPES[x.d.t].c}"></span><b>${x.d.n}</b><em>${mStr(x.m)}${x.d.u?' · '+num(x.d.u)+'세대':''}</em></li>`).join('')||'<li class="none">반경 1㎞ 안 사업이 없습니다.</li>'}</ul></div>
+      <p class="src">위치는 근사치입니다. 거리는 직선거리, 도보 시간은 직선×1.25로 어림했습니다.</p>`;
+  }else{
+    const t=TRAIL.find(x=>x.id===id); at=t.p[Math.floor(t.p.length/2)];
+    const ds=D.filter(vis).map(d=>({d,m:toLine(ll(d),t.p)[0]})).filter(x=>x.m<=500).sort((a,b)=>a.m-b.m);
+    const ps=POI.map(p=>({p,m:toLine(ll(p),t.p)[0]})).filter(x=>x.m<=500).sort((a,b)=>a.m-b.m);
+    // 도식 선 길이를 실제 총연장 21㎞에 맞춰 환산
+    const tot=TRAIL.reduce((a,x)=>a+trailKm(x),0), km=x=>trailKm(x)*21/tot, byS=s=>TRAIL.filter(x=>x.s===s).reduce((a,x)=>a+km(x),0);
+    const bar=['done','fix','plan'].map(s=>`<i class="${s}" style="flex:${byS(s)}"></i>`).join('');
+    html=`<span class="tag" style="--c:#0F172A">중랑동행길 21㎞</span><span class="sbadge">${TRAILSTAT[t.s]}</span>
+      <h2>${t.n}</h2><p class="addr">${t.when} · 약 ${km(t).toFixed(1)}㎞</p>
+      <div class="tbar">${bar}</div>
+      <div class="tleg"><span><i class="done"></i>이미 걷는 길 ${byS('done').toFixed(1)}㎞</span><span><i class="fix"></i>정비 ${byS('fix').toFixed(1)}㎞</span><span><i class="plan"></i>새로 이을 길 ${byS('plan').toFixed(1)}㎞</span></div>
+      <p class="body">${t.b}</p>
+      <div class="rel"><b>길에서 500m 안</b><ul>${ps.map(x=>`<li data-x="poi:${x.p.id}"><span class="k ${x.p.k}">${x.p.k==='market'?'市':'★'}</span><b>${x.p.n}</b><em>${mStr(x.m)}</em></li>`).join('')}${ds.map(x=>`<li data-x="proj:${x.d.id}"><span class="k" style="background:${TYPES[x.d.t].c}"></span><b>${x.d.n}</b><em>${mStr(x.m)}</em></li>`).join('')||(ps.length?'':'<li class="none">가까운 사업·시장이 없습니다.</li>')}</ul></div>
+      <p class="src">봉화산·용마산·망우산·중랑천을 잇는 21㎞ 순환 보행길. 류경기 구청장은 2026년 6월 3선 뒤 '3년 안 완공'을 밝혔습니다. 노선은 ${TRAIL_ASOF} 도식이며 구청 확정 노선이 아닙니다. 구간 길이는 도식을 총연장 21㎞에 맞춰 환산한 어림값입니다.</p>`;
+  }
+  pop.style.setProperty('--c',c);
+  pop.innerHTML=`<button class="x" aria-label="닫기">×</button>${html}`;
+  pop.querySelector('.x').onclick=close;
+  pop.querySelectorAll('.rel li[data-x]').forEach(li=>li.onclick=()=>{const [k2,id2]=li.dataset.x.split(':');k2==='proj'?open(id2):openX(k2,id2)});
+  pop.classList.add('on'); $('sheet').classList.remove('on');
+  syncMarkers(); applyFilters();
+  map.flyTo({center:at,zoom:k==='trail'?14.6:Math.max(Math.min(map.getZoom(),15),14.4),pitch:55,bearing:map.getBearing(),
+    offset:mobile()?[0,-Math.round(stage.clientHeight*.22)]:[-190,40],duration:1400,essential:true});
+}
 map.on('click',e=>{
   const layers=['z-sel','z-vol','z-ghost','z-fill'].filter(l=>map.getLayer(l));
   const f=layers.length?map.queryRenderedFeatures(e.point,{layers}):[];
-  if(f.length){stopTour();open(f[0].properties.id)}else if(sel)close();
+  const tf=!f.length&&map.getLayer('tr-hit')&&showTrail?map.queryRenderedFeatures(e.point,{layers:['tr-hit']}):[];
+  if(f.length){stopTour();open(f[0].properties.id)}else if(tf.length){stopTour();openX('trail',tf[0].properties.id)}else if(sel||selX)close();
 });
-['z-fill','z-vol','z-ghost'].forEach(l=>{map.on('mouseenter',l,()=>map.getCanvas().style.cursor='pointer');map.on('mouseleave',l,()=>map.getCanvas().style.cursor='')});
+['z-fill','z-vol','z-ghost','tr-hit'].forEach(l=>{map.on('mouseenter',l,()=>map.getCanvas().style.cursor='pointer');map.on('mouseleave',l,()=>map.getCanvas().style.cursor='')});
 
 /* ───── 목록 ───── */
 function renderList(){
@@ -227,6 +357,8 @@ $('north').onclick=()=>map.easeTo({bearing:0,duration:600});
 $('home').onclick=()=>{stopTour();close();map.flyTo({...HOME(),duration:1400})};
 $('tilt').onclick=e=>{const on=e.currentTarget.getAttribute('aria-pressed')!=='true';e.currentTarget.setAttribute('aria-pressed',on);e.currentTarget.textContent=on?'3D':'2D';map.easeTo({pitch:on?58:0,duration:700})};
 $('future').onclick=e=>{showFuture=e.currentTarget.getAttribute('aria-pressed')!=='true';e.currentTarget.setAttribute('aria-pressed',showFuture);e.currentTarget.textContent=showFuture?'계획':'지금';applyFilters()};
+$('poiBtn').onclick=e=>{showPOI=e.currentTarget.getAttribute('aria-pressed')!=='true';e.currentTarget.setAttribute('aria-pressed',showPOI);applyOverlay();syncMarkers()};
+$('trailBtn').onclick=e=>{showTrail=e.currentTarget.getAttribute('aria-pressed')!=='true';e.currentTarget.setAttribute('aria-pressed',showTrail);applyOverlay();syncMarkers()};
 $('legX').onclick=()=>$('legend').remove();
 document.addEventListener('keydown',e=>{if(e.key==='Escape'){stopTour();close();$('sheet').classList.remove('on')}});
 function toast(t){const el=$('toast');el.textContent=t;el.classList.add('on');setTimeout(()=>el.classList.remove('on'),6000)}
@@ -248,6 +380,10 @@ const TOUR=[
   p:'서일대와 망우역 사이 산자락 저층주거지에 모아타운이 잇따라 관리계획을 받았고, 상봉13구역이 조합설립을 앞두고 있습니다.'},
  {t:'길게 멈춘 곳들',v:{center:[127.0830,37.5815],zoom:14.3,pitch:50,bearing:0},
   p:'면목2동과 용마산역세권 두 지역주택조합은 조합원 모집 뒤 8~9년째 조합을 세우지 못했습니다. 확보한 토지사용권원이 요건(80%)에 한참 못 미치는 20~30% 수준입니다.'},
+ {t:'시장과 정비사업',v:{center:[127.0885,37.5870],zoom:15.0,pitch:60,bearing:-10},
+  p:'동원·면목·사가정·동부시장, 네 시장이 7호선 1.5㎞ 안에 몰려 있습니다. 시장마다 걸어서 15분 거리에 수천 세대가 새로 들어설 계획입니다. 시장 표시(市)를 누르면 그 배후 단지가 이어집니다.'},
+ {t:'중랑동행길 21㎞',v:{center:[127.0925,37.5920],zoom:13.2,pitch:50,bearing:-22},
+  p:'봉화산·망우산·용마산과 중랑천을 한 고리로 잇는 길입니다. 흰 선은 지금 걷는 길, 노란 점선은 정비 중인 구간, 흰 점선은 2029년까지 새로 이을 구간입니다.'},
  {t:'신내택지',v:{center:[127.1050,37.6112],zoom:14.9,pitch:60,bearing:-30},
   p:'1990년대 조성된 아파트 단지입니다. 서울시가 올해 지구단위계획 초안을 공개하면서 재건축 밑그림 논의가 시작됐습니다.'}
 ];
@@ -285,3 +421,4 @@ fetch('boundary.json').then(r=>r.json()).then(b=>{
 const _setup=setupLayers;
 setupLayers=function(){if(!BOUNDARY){const w=setInterval(()=>{if(BOUNDARY){clearInterval(w);if(!map.getSource('zones'))_setup()}},100);return}if(!map.getSource('zones'))_setup()};
 chips();syncMarkers();renderList();zoomClasses();
+$('typeLeg').innerHTML=Object.values(TYPES).map(v=>`<span style="--c:${v.c}"><i></i>${v.n}</span>`).join('');

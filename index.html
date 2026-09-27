@@ -7,12 +7,12 @@
 <title>중랑 정비지도 3D</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+KR:wght@400;500;600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="vendor/maplibre-gl.css">
+<link rel="stylesheet" href="maplibre-gl.css">
 <style>
 :root{
- <link rel="stylesheet" href="maplibre-gl.css">
+  --ink:#1B2430; --ink2:#55616D; --ink3:#8A96A1; --panel:#FFFFFF; --line:#E2E7EB; --chip:#F2F5F7;
   --shadow:0 6px 24px rgba(27,36,48,.18); --accent:#5B3FD6; --done:#1B2430;
-  --low:#E6D6BC; --high:#9FB0C2;
+  --low:#EFE9DF; --high:#B5B6B7;
 }
 *,*::before,*::after{box-sizing:border-box}
 html,body{height:100%;margin:0}
@@ -37,8 +37,8 @@ button{font:inherit;color:inherit}
 :focus-visible{outline:2px solid var(--accent);outline-offset:2px}
 .st-sw{width:14px;height:10px;border-radius:2px}
 .st-done{background:var(--done)}
-.st-fixed{background:var(--accent)}
-.st-pending{border:1.5px dashed var(--accent);background:color-mix(in srgb,var(--accent) 22%,transparent)}
+.st-fixed{background:var(--ink2)}
+.st-pending{border:1.5px dashed var(--ink2);background:color-mix(in srgb,var(--ink2) 18%,transparent)}
 .st-plan{border:1.5px dotted var(--ink3)}
 .st-stalled{background:repeating-linear-gradient(45deg,var(--ink3) 0 2px,transparent 2px 4px);border:1px solid var(--ink3)}
 .st-dropped{background:var(--ink3);opacity:.45}
@@ -84,14 +84,67 @@ button{font:inherit;color:inherit}
 .pbtn{height:42px;padding:0 18px;border-radius:21px;border:0;background:var(--ink);color:var(--panel);font-weight:600;box-shadow:var(--shadow);cursor:pointer;white-space:nowrap}
 .pbtn.alt{background:var(--panel);color:var(--ink);border:1px solid var(--line)}
 
-.legend{position:absolute;left:12px;top:12px;z-index:5;background:color-mix(in srgb,var(--panel) 92%,transparent);border:1px solid var(--line);border-radius:10px;padding:8px 10px;font-size:11px;color:var(--ink2);box-shadow:var(--shadow);max-width:230px}
+.legend{position:absolute;left:12px;top:12px;z-index:5;background:color-mix(in srgb,var(--panel) 92%,transparent);border:1px solid var(--line);border-radius:10px;padding:8px 10px;font-size:11px;color:var(--ink2);box-shadow:var(--shadow);max-width:260px;max-height:calc(100% - 100px);overflow:auto}
 .legend b{display:block;font-size:11px;color:var(--ink);margin-bottom:4px}
-.ramp{height:8px;border-radius:4px;background:linear-gradient(90deg,var(--low),#D8D9D6,var(--high));margin:2px 0}
+.ramp{height:8px;border-radius:4px;background:linear-gradient(90deg,var(--low),#DAD7D2,var(--high));margin:2px 0}
 .rl{display:flex;justify-content:space-between;color:var(--ink3)}
 .vol{display:flex;align-items:center;gap:6px;margin-top:6px}
-.vol i{width:14px;height:12px;border-radius:2px;background:var(--accent);opacity:.8}
-.vol i.g{opacity:.3;border:1px dashed var(--accent)}
+.vol i{width:14px;height:12px;border-radius:2px;background:var(--ink2);opacity:.85}
+.vol i.g{opacity:.35;border:1px dashed var(--ink)}
 .legend .lx{position:absolute;right:4px;top:2px;border:0;background:none;color:var(--ink3);cursor:pointer;font-size:14px;width:28px;height:28px}
+
+.legend .sep{height:1px;background:var(--line);margin:8px 0 6px}
+.legend .tw{display:grid;grid-template-columns:1fr 1fr;gap:2px 8px}
+.legend .tw span{display:flex;align-items:center;gap:5px;white-space:nowrap}
+.legend .tw i{width:10px;height:10px;border-radius:2px;background:var(--c);flex:none}
+.legend .ln{display:flex;align-items:center;gap:6px;margin-top:3px}
+.legend .ln i{width:22px;height:6px;border-radius:3px;background:#0F172A;position:relative;flex:none}
+.legend .ln i::after{content:"";position:absolute;left:2px;right:2px;top:2px;height:2px}
+.legend .ln i.done::after{background:#fff}
+.legend .ln i.fix::after{background:repeating-linear-gradient(90deg,#FFD23F 0 4px,transparent 4px 6px)}
+.legend .ln i.plan{opacity:.6}.legend .ln i.plan::after{background:repeating-linear-gradient(90deg,#fff 0 1px,transparent 1px 4px)}
+.legend .ln .g{width:14px;height:14px;border-radius:3px;display:grid;place-items:center;font-size:9px;font-weight:700;color:#fff;background:#0F172A}
+.legend .ln .g.pl{background:#fff;color:#475569;border:1.5px solid #475569}
+
+/* 시장·명소 마커: 둥근 사업 마커와 달리 네모 */
+.pk{border:0;padding:0;background:none;cursor:pointer}
+.pk .pb2{display:flex;align-items:center;gap:4px;height:22px;padding:0 7px 0 3px;border-radius:5px;font-size:11px;font-weight:600;white-space:nowrap;box-shadow:0 1px 4px rgba(27,36,48,.25)}
+.pk .gl{width:16px;height:16px;border-radius:3px;display:grid;place-items:center;font-size:10px;font-weight:700;flex:none}
+.pk.market .pb2{background:#0F172A;color:#fff;border:1.5px solid #0F172A}
+.pk.market .gl{background:#fff;color:#0F172A}
+.pk.place .pb2{background:#fff;color:#334155;border:1.5px solid #475569}
+.pk.place .gl{background:#475569;color:#fff}
+.pk.sel .pb2{box-shadow:0 0 0 3px #fff,0 0 0 5px #0F172A}
+.pk.hl .pb2{box-shadow:0 0 0 2px #fff,0 0 0 4px #FFD23F}
+.pk.dim{opacity:.3}
+.compact .pk .nm{display:none}.compact .pk .pb2{padding:0 3px}
+.compact .pk.market .nm,.compact .pk.sel .nm{display:inline}.compact .pk.market .pb2,.compact .pk.sel .pb2{padding:0 7px 0 3px}
+.far .pk.place:not(.sel):not(.hl) .nm{display:none}
+.trl{border:0;cursor:pointer;display:flex;align-items:center;gap:4px;font:600 10px/1 inherit;padding:3px 6px;border-radius:9px;background:rgba(15,23,42,.82);color:#fff;white-space:nowrap}
+.trl i{width:8px;height:8px;border-radius:50%;background:#fff}
+.trl.fix i{background:#FFD23F}.trl.plan i{background:none;border:1.5px dotted #fff}
+.compact .trl{display:none}
+
+/* 관계 목록 */
+.rel{margin:0 0 10px}
+.rel>b{display:block;font-size:11px;color:var(--ink3);font-weight:600;margin-bottom:4px}
+.rel ul{list-style:none;margin:0;padding:0}
+.rel li{display:flex;align-items:center;gap:8px;padding:6px 6px;border-radius:8px;cursor:pointer;font-size:13px}
+.rel li:hover{background:var(--chip)}
+.rel li b{flex:1;min-width:0;font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.rel li em{font-style:normal;font-size:11px;color:var(--ink3);white-space:nowrap}
+.rel li.none,.rel .none{color:var(--ink3);cursor:default;font-size:12px;margin:0}
+.rel .k{width:16px;height:16px;border-radius:3px;flex:none;display:grid;place-items:center;font-size:9px;font-weight:700}
+.rel .k.market{background:#0F172A;color:#fff}.rel .k.place{background:#fff;color:#475569;border:1.5px solid #475569}
+.rel .k.trail{background:#0F172A;position:relative}.rel .k.trail::after{content:"";position:absolute;left:3px;right:3px;top:7px;height:2px;background:#fff}
+.rel .k.trail.fix::after{background:#FFD23F}
+.lead{background:color-mix(in srgb,#FFD23F 22%,transparent);border-radius:8px;padding:8px 10px;margin:0 0 10px;font-size:13px;line-height:1.55;color:var(--ink)}
+.mix{display:flex;flex-wrap:wrap;gap:4px 10px;margin:0 0 10px;font-size:11px;color:var(--ink2)}
+.mix .mx{display:flex;align-items:center;gap:4px}.mix i{width:9px;height:9px;border-radius:2px;background:var(--c)}
+.tbar{display:flex;height:8px;border-radius:4px;overflow:hidden;margin:12px 0 4px;gap:2px}
+.tbar i.done,.tleg i.done{background:#0F172A}.tbar i.fix,.tleg i.fix{background:#FFD23F}.tbar i.plan,.tleg i.plan{background:repeating-linear-gradient(90deg,#94A3B8 0 3px,transparent 3px 5px);border:1px solid #94A3B8}
+.tleg{display:flex;flex-wrap:wrap;gap:2px 10px;font-size:11px;color:var(--ink2);margin-bottom:10px}
+.tleg span{display:flex;align-items:center;gap:4px}.tleg i{width:10px;height:8px;border-radius:2px;display:inline-block}
 
 /* 투어 카드 */
 .tour{position:absolute;left:50%;transform:translateX(-50%);bottom:calc(84px + env(safe-area-inset-bottom,0px));z-index:25;width:min(460px,calc(100% - 24px));background:var(--ink);color:#fff;border-radius:14px;padding:14px 16px 12px;box-shadow:var(--shadow);display:none}
@@ -182,10 +235,21 @@ button{font:inherit;color:inherit}
       <div class="opt">
         <div class="vol"><i></i>확정된 계획 높이</div>
         <div class="vol"><i class="g"></i>아직 확정 전</div>
+        <div class="sep"></div>
+        <b>계획 건물 색 = 사업 종류</b>
+        <div class="tw" id="typeLeg"></div>
       </div>
+      <div class="sep"></div>
+      <b>중랑동행길 21㎞</b>
+      <div class="ln"><i class="done"></i>이미 걷는 길</div>
+      <div class="ln"><i class="fix"></i>정비 중·예정</div>
+      <div class="ln"><i class="plan"></i>새로 이을 길 (2029)</div>
+      <div class="ln"><span class="g">市</span>전통시장 <span class="g pl">★</span>명소</div>
     </aside>
     <div class="ctl">
       <button class="fab" id="future" aria-pressed="true" aria-label="계획 높이 보기">계획</button>
+      <button class="fab" id="poiBtn" aria-pressed="true" aria-label="시장·명소 보기">시장</button>
+      <button class="fab" id="trailBtn" aria-pressed="true" aria-label="중랑동행길 보기">동행길</button>
       <button class="fab" id="tilt" aria-pressed="true" aria-label="입체 기울기 전환">3D</button>
       <button class="fab big" id="zin" aria-label="확대">+</button>
       <button class="fab big" id="zout" aria-label="축소">−</button>
