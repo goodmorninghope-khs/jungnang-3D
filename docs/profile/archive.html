@@ -1,0 +1,139 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="description" content="정책셰프 김현성의 기고·인터뷰·보도·강연 아카이브. 소통, 민생경제, 디지털사회혁신, 글로벌 스탠다드, 리더십.">
+<title>김현성 아카이브</title>
+<style>html{color-scheme:light}body{margin:0}img{max-width:100%}[hidden]{display:none!important}</style>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Hahmlet:wght@400;600;800&family=IBM+Plex+Sans+KR:wght@400;500;600&family=IBM+Plex+Mono:wght@500&display=swap">
+<link rel="stylesheet" href="style.css">
+<style>
+.arch-head{padding-block:56px 28px;display:grid;gap:14px}
+.arch-head h1{font-family:var(--display);font-weight:800;font-size:clamp(30px,6vw,48px);margin:0;line-height:1.2}
+.arch-head p{margin:0;color:var(--ink-soft);max-width:60ch}
+.filters{display:grid;gap:10px;padding-block:18px;border-block:1px solid var(--rule)}
+.frow{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.frow .fl{font-family:var(--mono);font-size:11px;letter-spacing:.1em;color:var(--ink-soft);width:52px}
+.chip{font:inherit;font-size:14px;border:1px solid var(--rule);background:var(--paper);color:var(--ink);padding:5px 12px;border-radius:999px;cursor:pointer}
+.chip[aria-pressed="true"]{background:var(--ink);color:var(--paper);border-color:var(--ink)}
+.chip .n{font-family:var(--mono);font-size:11px;opacity:.7;margin-left:4px}
+.count{font-size:13px;color:var(--ink-soft);padding-top:14px}
+.list{list-style:none;margin:0;padding:0}
+.item{display:grid;grid-template-columns:92px 1fr;gap:4px 20px;padding-block:16px;border-bottom:1px solid var(--rule)}
+.item .dt{font-family:var(--mono);font-size:13px;color:var(--ink-soft);font-variant-numeric:tabular-nums;padding-top:3px}
+.item h3{margin:0;font-size:16px;font-weight:600;line-height:1.55}
+.item h3 a{color:var(--ink);text-decoration:underline;text-decoration-color:var(--rule);text-underline-offset:4px}
+.item h3 a:hover{text-decoration-color:var(--coral)}
+.item h3 a::after{content:" ↗";font-size:12px;color:var(--ink-soft)}
+.meta{display:flex;flex-wrap:wrap;gap:6px 12px;margin-top:6px;font-size:12px;color:var(--ink-soft)}
+.tag{font-weight:600}
+.tag.sotong{color:var(--teal)} .tag.minsaeng{color:var(--coral)} .tag.digital{color:var(--amber)} .tag.global{color:var(--sky)} .tag.leader{color:var(--ink)}
+.todo{margin-top:28px;padding:16px 18px;background:var(--paper-2);font-size:14px;color:var(--ink-soft)}
+@media (max-width:640px){.item{grid-template-columns:1fr}.frow .fl{width:100%}}
+</style>
+</head>
+<body>
+<nav class="topnav" aria-label="섹션">
+  <div class="wrap navin">
+    <a class="brand" href="index.html">김현성</a>
+    <div class="links"><a href="index.html#questions">물음</a><a href="chronicle.html">연대기</a><a href="library.html">자료실</a><a href="archive.html" aria-current="page">아카이브</a><a href="words.html">단어들</a></div>
+  </div>
+</nav>
+
+<div class="wrap">
+<header class="arch-head">
+  <div class="studio">기고 · 인터뷰 · 보도 · 강연 · 수상</div>
+  <h1>말하고 쓴 것들</h1>
+  <p>현장에서 건져 올린 생각을 다섯 개의 점으로 나눠 모았습니다. 점과 형식을 골라 보세요.</p>
+</header>
+
+<div class="filters">
+  <div class="frow" id="f-pillar"><span class="fl">다섯 점</span></div>
+  <div class="frow" id="f-type"><span class="fl">형식</span></div>
+</div>
+<div class="count" id="count" aria-live="polite"></div>
+<ol class="list" id="list"></ol>
+<p class="todo">↗ 표시가 있는 제목은 원문으로 이어집니다. 나머지 기록의 원문 링크는 차례로 채워 넣는 중입니다.</p>
+
+<footer>
+  <div class="sig">뜻과 땀으로 짓는 <em>때</em></div>
+  <p>뜻땀때 스튜디오 · © 2026 김현성</p>
+</footer>
+</div>
+
+<script>
+const PILLARS={sotong:"소통",minsaeng:"민생경제",digital:"디지털사회혁신",global:"글로벌 스탠다드",leader:"리더십"};
+const TYPES=["기고","인터뷰","보도","강연","책","수상"];
+// [date, type, outlet, title, pillar]
+const ITEMS=[
+ ["2026.07.27","보도","서울신문","소상공인 AI 활용 적극 돕는 중랑","minsaeng","https://go.seoul.co.kr/news/newsView.php?id=20260727020002"],
+ ["2026.07.23","강연","헤럴드경제","중랑구, AI시대 소상공인 지원정책 해법 찾는다","minsaeng","https://biz.heraldcorp.com/article/10818464"],
+ ["2026.05.13","인터뷰","YTN 라디오","소상공인 버린 AI? 정부, 600만 피눈물 닦아줄 때","global","https://www.ytn.co.kr/_ln/0103_202605131458562377"],
+ ["2026","인터뷰","한스경제","“플랫폼 독점 넘어 ‘소상공인이 부리는 AI’ 만들어야”","global","http://www.hansbiz.co.kr/news/articleView.html?idxno=819596"],
+ ["2026.02.27","인터뷰","블로터","“디지털 경제 회복, 플랫폼 아닌 ‘소상공인’ 성장에서 시작”","minsaeng","https://www.bloter.net/news/articleView.html?idxno=655372"],
+ ["2026.02.26","보도","브릿지경제","[신간] ‘소상공인을 버린 AI’, 소상공인을 위한 공정경쟁 환경 제안","minsaeng","https://www.viva100.com/article/20260226500861"],
+ ["2026.02.24","보도","뉴스컬처","[신간] ‘소상공인을 버린 AI’, 플랫폼 독점 넘어 ‘소상공인이 부리는 AI’ 제안","minsaeng","https://www.nc.press/news/articleView.html?idxno=608643"],
+ ["2024.07.12","기고","광주드림","광주경제진흥상생일자리재단 출범 의미","leader","https://www.gjdream.com/news/articleView.html?idxno=646053"],
+ ["2023.08.22","보도","전자신문","광주경제진흥상생일자리재단 대표 취임, “경쟁력 있는 디지털 상공인 육성”","leader","https://www.etnews.com/20230822000251"],
+ ["2020.04.08","보도","머니투데이","인플루언서경제산업협회, 이달의 인플루언서 어워드 개최","sotong","https://news.mt.co.kr/mtview.php?no=2020040810281146161"],
+ ["2020.02.04","보도","이데일리","인플루언서산업협회, 서울시와 ‘코로나 극복 캠페인’ 논의","sotong","https://edaily.co.kr/News/Read?mediaCodeNo=257&newsId=04054086625667240"],
+ ["2019.11.21","보도","이데일리","인산협, 14억 사로잡는 中 왕홍 육성지 찾는다","global","https://edaily.co.kr/News/Read?mediaCodeNo=257&newsId=03043846622688016"],
+ ["2019.11.02","수상","한국인터넷기자협회","인터넷기자상 인터넷소통상 수상 (인플루언서경제산업협회 회장)","sotong","https://www.kijanews.co.kr/5411"],
+ ["2018.03.12","인터뷰","오마이뉴스","“‘물음’에서 시작된 ‘소통’으로”","sotong","http://www.ohmynews.com/NWS_Web/View/at_pg.aspx?CNTN_CD=A0002413041"],
+ ["2026.10.01","강연","중랑구","중랑구 직원 특강","digital"],
+ ["2026.09.30","강연","소상공인 지식배움터","소담소담 명사 초청 토크콘서트","minsaeng"],
+ ["2026.02","책","","『소상공인을 버린 AI』","global"],
+ ["2025.12.15","보도","국가인공지능전략위원회","대한민국 인공지능행동계획(안) 주요 내용 소개와 의견 수렴 착수","global"],
+ ["2025.06.18","기고","","소상공인이 살아야 대한민국이 산다","minsaeng"],
+ ["2025.06.16","기고","칼럼","소상공인 살리기, 현실은 이렇습니다","minsaeng"],
+ ["2025.06.11","기고","","지금부터 진짜 배달이 시작된다","minsaeng"],
+ ["2025.06.04","기고","","결국, 국민이 합니다","sotong"],
+ ["2025.06.12","보도","광주경제진흥상생일자리재단","디지털 닥터단 협약 체결","digital"],
+ ["2025.05.15","보도","광주경제진흥상생일자리재단","광주지역 소상공인 연대, 생각의 출마선언","sotong"],
+ ["2025.04.13","기고","인터넷뉴스","디지털 대전환 시대, 소상공인을 위한 소통령을 기다리며","minsaeng"],
+ ["2025.04.03","기고","광주매일신문","공정한 배달을 외치다: 광주에서 시작된 연대","minsaeng"],
+ ["2025.03.12","기고","무등일보","소상공인마다 특색 있는 상품을 가질 수 있도록","minsaeng"],
+ ["2025.02.27","보도","광주경제진흥상생일자리재단","전통시장 상인 종합건강검진 시행","minsaeng"],
+ ["2025.02.24","기고","플레이광주","소상공인이 있어야 광주가 산다","minsaeng"],
+ ["2025.02.05","기고","광주매일신문","소상공인이 일어설 날","minsaeng"],
+ ["2025.02.02","기고","무등일보","2025 AI 대전환","digital"],
+ ["2025.01.17","기고","플레이광주","대전환을 통한 기준도시 광주","global"],
+ ["2025.01.15","보도","광주경제진흥상생일자리재단","한국거버넌스 공공기관 거버넌스 수상","leader"],
+ ["2024.11.07","보도","광주경제진흥상생일자리재단","소상공인 라이브커머스 라라라 프로젝트","digital"],
+ ["2024.10.07","보도","광주경제진흥상생일자리재단","소상공인 정책의견 국회 전달","sotong"],
+ ["2024.10.02","보도","광주경제진흥상생일자리재단","광산 QR선언","digital"],
+ ["2024.08.23","인터뷰","시사위크","“디지털 경제 전환기, 지역이 리더십 가질 기회”","leader","https://www.sisaweek.com/news/articleView.html?idxno=217495"],
+ ["2024.08.14","보도","광주경제진흥상생일자리재단","배민 탈퇴 1,000인 디지털 서명운동 개시","minsaeng"],
+ ["2024.08.07","인터뷰","광주일보","디지털 경제 전환, 소상공인이 글로벌 경쟁력을 갖출 기회","digital"],
+ ["2024.07.22","인터뷰","광주매일신문","“디지털 대전환 시대, 세계인이 소비하는 광주 만들겠다”","global","http://www.kjdaily.com/1721559511635980052"],
+ ["2024.07.19","보도","광주경제진흥상생일자리재단","배달의민족 독립선언","minsaeng"],
+ ["2024.02.01","보도","광주경제진흥상생일자리재단","소상공인 디지털 전환 실태조사 결과 발표","digital"],
+ ["2023.11.24","보도","광주경제진흥상생일자리재단","공공영역이 수요혁신에 나서야","minsaeng"]
+];
+ITEMS.sort((a,b)=>b[0].localeCompare(a[0]));
+let fp=null, ft=null;
+const byP=k=>ITEMS.filter(i=>i[4]===k).length, byT=k=>ITEMS.filter(i=>i[1]===k).length;
+function chip(label,n,pressed,on){const b=document.createElement('button');b.className='chip';b.type='button';b.setAttribute('aria-pressed',pressed);b.innerHTML=label+'<span class="n">'+n+'</span>';b.onclick=on;return b}
+function renderFilters(){
+  const P=document.getElementById('f-pillar'),T=document.getElementById('f-type');
+  P.querySelectorAll('.chip').forEach(c=>c.remove());T.querySelectorAll('.chip').forEach(c=>c.remove());
+  P.append(chip('전체',ITEMS.length,fp===null,()=>{fp=null;setHash();render()}));
+  for(const k in PILLARS)P.append(chip(PILLARS[k],byP(k),fp===k,()=>{fp=k;setHash();render()}));
+  T.append(chip('전체',ITEMS.length,ft===null,()=>{ft=null;render()}));
+  TYPES.forEach(t=>T.append(chip(t,byT(t),ft===t,()=>{ft=t;render()})));
+}
+function setHash(){try{history.replaceState(null,'',fp?'#'+fp:location.pathname)}catch(e){}}
+function render(){
+  renderFilters();
+  const rows=ITEMS.filter(i=>(!fp||i[4]===fp)&&(!ft||i[1]===ft));
+  document.getElementById('count').textContent=rows.length+'건';
+  document.getElementById('list').innerHTML=rows.map(i=>`<li class="item"><div class="dt">${i[0]}</div><div><h3>${i[5]?`<a href="${i[5]}" target="_blank" rel="noopener">${i[3]}</a>`:i[3]}</h3><div class="meta"><span class="tag ${i[4]}">${PILLARS[i[4]]}</span><span>${i[1]}</span>${i[2]?`<span>${i[2]}</span>`:''}</div></div></li>`).join('');
+}
+const h=location.hash.slice(1); if(PILLARS[h]) fp=h;
+render();
+</script>
+</body>
+</html>

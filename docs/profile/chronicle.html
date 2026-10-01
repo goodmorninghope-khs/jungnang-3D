@@ -1,0 +1,225 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="description" content="정책셰프 김현성 연대기. 1972년 담양에서 2026년 중랑까지, 세 개의 물음으로 읽는 기록.">
+<title>김현성 연대기</title>
+<style>html{color-scheme:light}body{margin:0}img{max-width:100%}[hidden]{display:none!important}</style>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Hahmlet:wght@400;600;800&family=IBM+Plex+Sans+KR:wght@400;500;600&family=IBM+Plex+Mono:wght@500&display=swap">
+<link rel="stylesheet" href="style.css">
+<style>
+.c-head{padding-block:56px 24px;display:grid;gap:14px}
+.c-head h1{font-family:var(--display);font-weight:800;font-size:clamp(30px,6vw,48px);margin:0;line-height:1.2}
+.c-head p{margin:0;color:var(--ink-soft);max-width:62ch}
+.legend{display:flex;flex-wrap:wrap;gap:8px 18px;font-size:12.5px;color:var(--ink-soft);padding-block:14px;border-block:1px solid var(--rule)}
+.legend b{font-weight:600;color:var(--ink)}
+.toc{display:flex;flex-wrap:wrap;gap:8px;margin-top:18px}
+.toc a{font-size:13px;text-decoration:none;border:1px solid var(--rule);padding:4px 12px;border-radius:999px;color:var(--ink)}
+.toc a:hover{border-color:var(--coral);color:var(--coral)}
+.chap{padding-top:52px;--c:var(--ink)}
+.chap.e0{--c:var(--ink-soft)} .chap.e1{--c:var(--teal)} .chap.e2{--c:var(--coral)} .chap.e3{--c:var(--amber)}
+.chap > h2{font-family:var(--display);font-size:clamp(22px,3.4vw,28px);margin:0;line-height:1.35}
+.chap > h2 small{display:block;font-family:var(--mono);font-size:12px;font-weight:500;letter-spacing:.1em;color:var(--c);margin-bottom:4px}
+.chap .q{margin:8px 0 0;font-family:var(--display);font-weight:600;font-size:17px;color:var(--c)}
+.tl{list-style:none;margin:20px 0 0;padding:0;border-left:2px solid var(--c)}
+.tl li{position:relative;display:grid;grid-template-columns:132px 1fr;gap:4px 20px;padding:14px 0 14px 22px;border-bottom:1px solid var(--rule)}
+.tl li::before{content:"";position:absolute;left:-7px;top:22px;width:12px;height:12px;border-radius:50%;background:var(--paper);border:2px solid var(--c)}
+.tl li.key::before{background:var(--c)}
+.tl .t{font-family:var(--mono);font-size:12.5px;color:var(--ink-soft);font-variant-numeric:tabular-nums;padding-top:3px}
+.tl .t small{display:block;font-family:var(--body);font-size:12px;color:var(--c);margin-top:2px;font-weight:600}
+.tl h3{margin:0;font-size:16px;font-weight:600;line-height:1.55}
+.tl p{margin:4px 0 0;font-size:14.5px;color:var(--ink-soft);max-width:62ch}
+.tl q{font-family:var(--display);font-weight:600;color:var(--ink);quotes:"“" "”"}
+.lbl{display:inline-block;font-size:10.5px;font-weight:600;border:1px solid var(--rule);color:var(--ink-soft);border-radius:3px;padding:0 5px;margin-left:6px;vertical-align:2px;font-family:var(--body)}
+.lbl.pub{border-color:var(--teal);color:var(--teal)}
+.lbl.pub a{color:inherit;text-decoration:none}
+.turns{list-style:none;margin:20px 0 0;padding:0;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:1px;background:var(--rule);border:1px solid var(--rule);counter-reset:t}
+.turns li{background:var(--paper);padding:16px 18px;counter-increment:t}
+.turns li::before{content:counter(t,decimal-leading-zero);font-family:var(--mono);font-size:11px;color:var(--coral)}
+.turns .w{font-family:var(--mono);font-size:11px;color:var(--ink-soft);margin-left:8px}
+.turns h3{margin:4px 0 4px;font-family:var(--display);font-size:16px;line-height:1.45}
+.turns p{margin:0;font-size:13.5px;color:var(--ink-soft)}
+.jing{width:100%;border-collapse:collapse;margin-top:20px;font-size:14px}
+.jing td,.jing th{text-align:left;vertical-align:top;padding:12px 10px;border-bottom:1px solid var(--rule)}
+.jing th{font-family:var(--mono);font-size:11px;letter-spacing:.08em;color:var(--ink-soft);font-weight:500}
+.jing td:first-child{font-family:var(--mono);font-size:12px;color:var(--coral);white-space:nowrap}
+.jing td:last-child{font-family:var(--display);font-weight:600}
+.quotes{columns:2 280px;column-gap:36px;margin-top:20px}
+.quotes figure{break-inside:avoid;margin:0 0 18px;padding-left:14px;border-left:3px solid var(--rule)}
+.quotes blockquote{margin:0;font-family:var(--display);font-weight:600;font-size:16px;line-height:1.55}
+.quotes figcaption{margin-top:4px;font-size:12px}
+.quotes h3{font-family:var(--mono);font-size:11px;letter-spacing:.1em;color:var(--teal);font-weight:500;margin:0 0 10px;break-after:avoid}
+@media (max-width:640px){
+  .tl li{grid-template-columns:1fr;gap:2px}
+  .turns{grid-template-columns:1fr}
+  .jing thead{display:none}.jing tr{display:grid;padding-block:10px;border-bottom:1px solid var(--rule)}.jing td{border:0;padding:2px 0}
+}
+</style>
+</head>
+<body>
+<nav class="topnav" aria-label="섹션">
+  <div class="wrap navin">
+    <a class="brand" href="index.html">김현성</a>
+    <div class="links"><a href="index.html#questions">물음</a><a href="chronicle.html" aria-current="page">연대기</a><a href="library.html">자료실</a><a href="archive.html">아카이브</a><a href="words.html">단어들</a></div>
+  </div>
+</nav>
+
+<div class="wrap">
+<header class="c-head">
+  <div class="studio">연대기 · 1972–2026</div>
+  <h1>물음이 이끌어 온 삶</h1>
+  <p>담양 조합장네 큰아들이 광고인이 되고, 서울시청의 디지털보좌관이 되고, 골목의 정책셰프가 되기까지. 자리보다 물음을 기준으로 다시 묶었습니다.</p>
+  <div class="toc">
+    <a href="#e0">프롤로그</a><a href="#e1">첫 10년</a><a href="#e2">두 번째 10년</a><a href="#e3">진행 중인 10년</a><a href="#turns">전환점 10</a><a href="#jing">징비록</a><a href="#quotes">직접 쓴 문장</a>
+  </div>
+</header>
+<div class="legend">
+  <span><b>●</b> 그 시기를 대표하는 일</span>
+  <span><span class="lbl pub">보도</span> 언론·관청 기록으로 확인한 일 (누르면 원문)</span>
+  <span><span class="lbl">저서</span> 저서와 원고에 적은 기억</span>
+</div>
+
+<section class="chap e0" id="e0">
+  <h2><small>프롤로그 · 1972–1999</small>물음의 시작</h2>
+  <ol class="tl">
+    <li><div class="t">1972</div><div><h3>담양 조합장네 큰아들</h3><p>아버지의 가르침은 “인사 잘해라.” <q>인사성은 아버지가 준 선물이다.</q></p></div></li>
+    <li><div class="t">1987</div><div><h3>유세장의 세 시간</h3><p>중학생이 수업을 빼먹고 담양 유세장에서 세 시간을 기다려 김대중 후보의 연설을 들었다.</p></div></li>
+    <li class="key"><div class="t">고1</div><div><h3>뜨내기 30%를 먼저 셈하다</h3><p>광주 송원고. 시골에서 온 ‘뜨내기’ 친구가 전교생의 30%였다. 누구에게 말할지부터 셈해 학생회 선거를 60:40으로 이겼다. <q>선거는 또 다른 형식의 만남이자 인사라는 생각도 들었다.</q></p></div></li>
+    <li><div class="t">1989–90</div><div><h3>의사의 꿈을 기자의 꿈으로</h3><p>전교조 해직교사 복직운동을 겪고, 존경하던 선생님을 잃었다. 이과에서 문과로 옮겼다. <q>나만의 잣대를 만들고 신념을 가져야 한다.</q></p></div></li>
+    <li><div class="t">1991</div><div><h3>중앙대 국문학과 입학</h3><p>기자가 되려고 들어갔다. 이후 정치외교학과로 옮겼다.</p></div></li>
+    <li><div class="t">1993–95</div><div><h3>신병 게시판 ‘막글터’</h3><p>육군 5사단 신병교육대 조교. 대학노트로 만든 게시판, 어떤 글이든 막 쓸 수 있어서 ‘막글터’였다.</p></div></li>
+    <li class="key"><div class="t">1996–97</div><div><h3>대학생 모니터단과 ‘3업 DJ 플랜’</h3><p>100여 명이 자비로 모여 1,000명 가까이로 늘었다. 보상은 설렁탕 한 그릇. 당선 뒤 스스로 해체했다. <q>대학생 모니터단은 국내 최초의 정치인 팬클럽이었다.</q></p></div></li>
+    <li><div class="t">1997</div><div><h3>꽃 한 송이로 박노해를 섭외하다</h3><p>중앙대 개교 80주년 기념사업 위원장. 낡은 삐삐를 모아 팔아 예산을 마련하고, 명사 릴레이 특강을 열었다.</p></div></li>
+    <li><div class="t">1998</div><div><h3>상암기획 ‘IMF 인턴’의 입봉</h3><p>사내 유일한 인터넷 전문가. 인턴이 경쟁 PT의 온라인 파트를 직접 발표했다. 수주는 못 했지만 정식사원이 됐다.</p></div></li>
+  </ol>
+</section>
+
+<section class="chap e1" id="e1">
+  <h2><small>첫 10년 · 2000–2011 · 광고와 나눔</small>광고 기술을 공익에 쓰다</h2>
+  <p class="q">물음 · 커뮤니케이션은 사회문제 해결을 위해 어떤 역할을 할 수 있을까?</p>
+  <ol class="tl">
+    <li class="key"><div class="t">2000.5<small>금강기획</small></div><div><h3>대통령 PI</h3><p>캠페인기획팀에서 대통령 PI를 맡았다. 청와대와 매일 통화하고 일주일에 한 번 들어갔다. <q>보이는 모든 것은 해석된다.</q> <span class="lbl">저서</span></p></div></li>
+    <li><div class="t">2000.11</div><div><h3>축의금 1%를 나누다</h3><p>결혼식 축의금의 1%를 아름다운재단에 기부했다.</p></div></li>
+    <li><div class="t">2001–02</div><div><h3>‘승일(勝日) 월드컵’ 제안</h3><p>일본 역사교과서 문제로 생긴 분노를 월드컵 응원의 에너지로 돌리자고 제안했다. <span class="lbl">저서</span></p></div></li>
+    <li><div class="t">2002.4<small>금강기획</small></div><div><h3>공공커뮤니케이션팀 차장</h3><p>PI팀이 해체된 뒤 공공캠페인으로 방향을 틀었다.</p></div></li>
+    <li><div class="t">2003–</div><div><h3>대학생 모임 ‘유브레인’</h3><p>해마다 기수를 뽑아 무료로 가르쳤다.</p></div></li>
+    <li class="key"><div class="t">2004</div><div><h3>아름다운재단 ‘전문성 1% 나눔’ 광고</h3><p>재능기부로 만든 1% 캠페인. “떠나는 여름 99%, 나누는 여름 1%.” 제작비는 보통의 10분의 1.</p></div></li>
+    <li class="key"><div class="t">2005–<small>금강기획</small></div><div><h3>보건복지부 금연 캠페인 「자학」·「치아변색」</h3><p>과녁을 20대 초기 흡연자로 좁혔다. 그들이 신경 쓰는 피부와 치아를 보여 줬다. “한 대 피우는 중이군요.” 2005 한국광고대상 특별상, 2006 공익광고상. <span class="lbl pub"><a href="https://www.hankookilbo.com/news/article/200504010079326000" target="_blank" rel="noopener">보도</a></span></p></div></li>
+    <li><div class="t">2004–06</div><div><h3>노인요양제도 광고</h3><p>장관을 뒷모습과 목소리만 나오는 조연으로 세웠다. “치매·중풍노인을 아무도 돌볼 수 없다면 대한민국이 돌봐야 합니다.”</p></div></li>
+    <li><div class="t">2008.5</div><div><h3>유브레인커뮤니케이션즈 창업</h3><p>공공 영역 전문 기획사. ‘NGO Identity Remodeling’으로 신청한 80여 개 단체 가운데 세 곳의 로고를 무료로 바꿔 줬다.</p></div></li>
+    <li><div class="t">2009</div><div><h3>공공커뮤니케이션 연구소</h3><p>입법 커뮤니케이션 세미나를 열고 PA(Public Affairs) 개념을 소개했다. 같은 해 박원순의 ‘트위터 사부’가 됐다.</p></div></li>
+    <li class="key"><div class="t">2009.9.28</div><div><h3>1트윗 = 1원, 트윗나눔</h3><p>트윗 한 번에 1원씩 기부하자는 제안. ‘1원의 행복나눔파티’로 이어졌다. 석 달 동안 600명 넘게, 800여만 원. <span class="lbl">저서</span> <span class="lbl pub"><a href="https://www.goodneighbors.kr/story/storycast/4717286/view.gn" target="_blank" rel="noopener">보도</a></span> <q>기부는 내 방 문턱 같이 넘기 수월해야 한다.</q></p></div></li>
+    <li><div class="t">2009.11</div><div><h3>아름다운재단 10주년 특별상</h3><p>“나눔의 길을 열어주신 트윗나눔 김현성님께.”</p></div></li>
+  </ol>
+</section>
+
+<section class="chap e2" id="e2">
+  <h2><small>두 번째 10년 · 2011–2020 · 서울과 디지털</small>듣고, 찾고, 연결하다</h2>
+  <p class="q">물음 · 디지털은 서울을 위해 무엇을 할 수 있을까?</p>
+  <ol class="tl">
+    <li><div class="t">2011.10</div><div><h3>SNS 선거의 시작</h3><p>서울시장 보궐선거에서 온라인과 뉴미디어를 맡았다. One+100, 투표 인증샷. <q>‘빅 스피커’가 아닌 ‘굿리스너’가 되어야 한다.</q></p></div></li>
+    <li class="key"><div class="t">2011.11.16<small>서울특별시</small></div><div><h3>시장실 비서관, 그리고 ‘청(聽)책’</h3><p>회사를 정리하고 시청에 들어갔다. 정책의 ‘정’을 ‘청’으로 바꾼 말을 만들었다. <q>들어 주기만 해도 불신은 해소된다.</q></p></div></li>
+    <li><div class="t">2012</div><div><h3>PR에서 Public Engagement로</h3><p>트위터로 들어온 시민 의견 12만여 건을 처리했다. <span class="lbl">저서</span></p></div></li>
+    <li class="key"><div class="t">2013.4</div><div><h3>올빼미버스</h3><p>심야 통화 데이터 30억 건으로 노선을 그었다. 4월 19일 두 노선(N26·N37) 시범운행, 시범기간 하루 평균 2,098명. 이어 정식 노선으로 넓혔다. <span class="lbl pub"><a href="https://www.ohmynews.com/NWS_Web/View/at_pg.aspx?CNTN_CD=A0001928801" target="_blank" rel="noopener">보도</a></span></p></div></li>
+    <li class="key"><div class="t">2013.7.18</div><div><h3>제돌이, 바다로</h3><p>반대 여론이 절반을 넘었다. 시민위원회가 열두 차례 열렸고, 제돌이는 바다로 돌아갔다. <q>제돌이의 꿈은 바다였습니다.</q></p></div></li>
+    <li><div class="t">2011–2016</div><div><h3>잡상인은 없다, 이동상인만 있다</h3><p>청책토론회, 광화문 시민발언대, 현장시장실, 열린데이터광장. <q>서울에 잡상인은 없습니다. 이동상인만 있습니다.</q></p></div></li>
+    <li><div class="t">2014.3</div><div><h3>응답소</h3><p>흩어진 31개 온라인 민원창구를 하나로 합쳤다.</p></div></li>
+    <li class="key"><div class="t">2014.7<small>서울특별시</small></div><div><h3>서울시 첫 디지털보좌관</h3><p>공공 와이파이 ‘까치온’, 디지노믹스. <q>디지털 시대에 인터넷 접속은 수돗물과 같습니다.</q> 같은 달 SBS 「매직아이」에 출연해 ‘뇌가 섹시한 사람’ 전략을 이야기했다. <span class="lbl pub"><a href="https://www.hankyung.com/article/2014070930417" target="_blank" rel="noopener">보도</a></span></p></div></li>
+    <li><div class="t">2015–16</div><div><h3>#원순씨가 간다, 3·3·3 원칙</h3><p>3일 전에 일정을 짜고, 3시간 전에 번개 일정을 정하고, 수행원은 3명 이내.</p></div></li>
+    <li class="key"><div class="t">2016.2.23</div><div><h3>「서울 디지털기본계획 2020」 발표</h3><p>본인이 ‘글로벌 디지털 수도’라 부른 계획. 4대 전략(소셜특별시·디지노믹스·디지털사회혁신·글로벌 디지털리더), 54개 실행과제, 5년간 4,605억 원, 시민 주도 사업 50% 목표. 가상 시민 ‘서울씨’, 비전 문장 “새로운 연결, 다른 경험.” <span class="lbl pub"><a href="https://www.hankookilbo.com/news/article/201602232040564276" target="_blank" rel="noopener">보도</a></span></p></div></li>
+    <li><div class="t">2017.3</div><div><h3>서울시를 떠나다</h3><p>뒤이어 2017년 5월 서울시 디지털 시민시장실이 가동됐다. 지금은 ‘스마트 서울뷰’로 이어지고 있다. <span class="lbl pub"><a href="https://news.seoul.go.kr/gov/archives/528037" target="_blank" rel="noopener">보도</a></span></p></div></li>
+    <li><div class="t">2017.6</div><div><h3>민주연구원 부원장</h3><p>말과 글을 지키는 ‘호위어(語)사’를 자처했다. <q>민주주의 사회에서는 말과 글이 권력이다.</q></p></div></li>
+    <li class="key"><div class="t">2017.10–11</div><div><h3>‘근의 공식’ 강의</h3><p>Change the Rule · Insight · Frame · Nudge. 지금 레시피에 들어가는 양념의 원형이다.</p></div></li>
+    <li><div class="t">2018.3</div><div><h3>첫 책 『72년생 김현성의 물음』</h3><p>물음이라는 말이 처음 책 제목이 됐다.</p></div></li>
+    <li><div class="t">2019</div><div><h3>인플루언서경제산업협회 회장, ‘디지털커뮤니케이션’ 강의</h3><p>모래시계 모델과 R·O·I. 레시피의 맛보기 층이 여기서 나왔다. 2019년 인터넷기자상 인터넷소통상. <span class="lbl pub"><a href="https://www.kijanews.co.kr/5411" target="_blank" rel="noopener">보도</a></span></p></div></li>
+  </ol>
+</section>
+
+<section class="chap e3" id="e3">
+  <h2><small>진행 중인 10년 · 2020– · 골목과 AI</small>빛이 닿지 않는 골목으로</h2>
+  <p class="q">물음 · 그늘 없는 AI는 가능한가?</p>
+  <ol class="tl">
+    <li class="key"><div class="t">2020.9<small>중소기업유통센터</small></div><div><h3>초대 소상공인디지털본부장, 디지털 경제백신</h3><p>떡볶이집 사장님을 강사로 세웠다. ‘가치삽시다’에 한 번 등록하면 14개 채널로 연결되게 했다. <q>진통제가 아니라 백신이 필요했다.</q> <span class="lbl pub"><a href="https://www.bloter.net/news/articleView.html?idxno=655228" target="_blank" rel="noopener">보도</a></span></p></div></li>
+    <li><div class="t">2022</div><div><h3>하이파이브 3년 결산</h3><p>5만 4천 명의 사장님이 함께했다. <span class="lbl">저서</span> 그리고 고백. <q>발견주의를 말하면서, 정작 우리는 신청주의 안에 머물러 있었다.</q></p></div></li>
+    <li class="key"><div class="t">2023.8.22<small>광주</small></div><div><h3>광주경제진흥상생일자리재단 초대 대표이사</h3><p>시장 세 곳에서 청책부터 했다. 재단을 ‘수요혁신기관’으로 다시 정의했다. 지산지소의 ‘지’를 D(District·Digital·Distant)로 바꾼 지산D소. <q>한 글자를 바꿨을 뿐인데, 방향이 달라졌다.</q> <span class="lbl pub"><a href="https://www.etnews.com/20230822000251" target="_blank" rel="noopener">보도</a></span></p></div></li>
+    <li><div class="t">2024.5</div><div><h3>1소1상</h3><p>사장님 한 명에 킬러 상품 하나. 밀키트 상품화 11곳. <q>‘간은 눈대중이에요’라고 하시던 사장님이 그램 단위로 재료를 재기 시작했다.</q></p></div></li>
+    <li class="key"><div class="t">2024.7.19</div><div><h3>배민 독립선언</h3><p>중개수수료 6.8%→9.8% 인상에 맞서 광주시의회에서 선언했다. 8월 서명에 사장님 785명과 소비자 762명, 모두 1,547명. 공공배달 점유율은 광주 17.3%, 전국 평균 3.87%. <span class="lbl pub"><a href="https://news.ikbc.co.kr/article/view/kbc202407190057" target="_blank" rel="noopener">보도</a></span> <span class="lbl pub"><a href="https://www.newsis.com/view/NISX20241009_0002914019" target="_blank" rel="noopener">점유율</a></span></p></div></li>
+    <li><div class="t">2024.9–</div><div><h3>QR광주, 청년 디지털 닥터단</h3><p>키오스크 대신 손님의 휴대폰으로. <q>테이블에 스티커 한 장.</q></p></div></li>
+    <li><div class="t">2024.11.2</div><div><h3>광주푸드클럽</h3><p>광주FC 홈경기에서 11개 로컬 브랜드가 함께 창단했다.</p></div></li>
+    <li class="key"><div class="t">2025.6</div><div><h3>송정역 떡갈비집의 농담</h3><p><q>우리는 그냥... ‘소(상공인을) 버린’ AI가 아니길 바랄 뿐이죠.</q> 국정기획위원회 경제2분과 자문위원 시절. 책은 여기서 출발했다.</p></div></li>
+    <li><div class="t">2025–</div><div><h3>국가인공지능전략위원회 자문위원</h3><p>소무 10조를 실행 계획으로 제안했다.</p></div></li>
+    <li class="key"><div class="t">2026.2.25</div><div><h3>『소상공인을 버린 AI』 출간</h3><p>1부 뜻, 2부 땀, 3부 때. 징비록, 디지털 권리장전, 소무 10조. <span class="lbl pub"><a href="https://www.viva100.com/article/20260226500861" target="_blank" rel="noopener">보도</a></span></p></div></li>
+    <li><div class="t">2026.5.13</div><div><h3>YTN 라디오 출연</h3><p>“소상공인 버린 AI? 정부, 600만 피눈물 닦아줄 때.” <span class="lbl pub"><a href="https://www.ytn.co.kr/_ln/0103_202605131458562377" target="_blank" rel="noopener">방송</a></span></p></div></li>
+    <li><div class="t">2026.7.21</div><div><h3>중랑구 소상공인 특강</h3><p>소상공인·전통시장 상인 80여 명과 ‘소상공인 정책 환경 변화와 지방정부의 역할’을 이야기했다. <span class="lbl pub"><a href="https://biz.heraldcorp.com/article/10818464" target="_blank" rel="noopener">보도</a></span></p></div></li>
+    <li class="key"><div class="t">2026.8<small>중랑</small></div><div><h3>중랑구 정책보좌관</h3><p>공공이 먼저 AI를 부리는 법을 익혀 골목에 건넨다.</p></div></li>
+    <li><div class="t">2026.9.1</div><div><h3>소상공인시장진흥공단 명예이사</h3><p>처음 위촉된 여섯 명 가운데 한 명. <span class="lbl pub"><a href="https://www.etoday.co.kr/news/view/2620852" target="_blank" rel="noopener">보도</a></span></p></div></li>
+    <li><div class="t">2026.10</div><div><h3>중랑구 직원 특강 · 부서장 심화 특강</h3><p>「맛있는 커뮤니케이션에는 레시피가 있다」. 10월 1일 직원 특강, 10월 15일 부서장 심화 특강. <a href="library.html#lectures">강연 자료 →</a></p></div></li>
+  </ol>
+</section>
+
+<section class="chap" id="turns">
+  <h2><small>슬라이드 한 장씩</small>인생의 전환점 10</h2>
+  <ol class="turns">
+    <li><span class="w">고1</span><h3>뜨내기가 60:40으로 이긴 비결: 30%를 먼저 봤다</h3><p>‘누구에게 말할 것인가’부터 계산했다.</p></li>
+    <li><span class="w">1989–90</span><h3>의사를 꿈꾸던 모범생, 펜을 택하다</h3><p>해직 선생님과 선생님의 죽음 앞에서 나만의 잣대를 찾았다.</p></li>
+    <li><span class="w">1997</span><h3>대학생이 김대중 앞에서 ‘이미지를 바꾸자’고 발표했다</h3><p>대가 없이 움직이는 공동체의 힘을 배웠다.</p></li>
+    <li><span class="w">2000</span><h3>면접에서 마케팅 대신 시사 논술을 봤다. 대통령 PI였다</h3><p>보이는 모든 것은 해석된다.</p></li>
+    <li><span class="w">2003–07</span><h3>PI팀이 해체된 자리에서 금연광고 「자학」이 나왔다</h3><p>타깃을 20대로 좁혀 한국광고대상 특별상을 받았다.</p></li>
+    <li><span class="w">2009</span><h3>1트윗 = 1원: 기부의 문턱을 방문턱 높이로</h3><p>창업한 광고인이 공익전문가가 됐다.</p></li>
+    <li><span class="w">2011</span><h3>지지율 5% 후보의 SNS 캠프, 그리고 회사를 접었다</h3><p>민간 CEO에서 시장실 비서관으로.</p></li>
+    <li><span class="w">2011–13</span><h3>정(政)책을 청(聽)책으로, 통화 30억 건이 그은 심야버스</h3><p>한 글자를 바꿔 듣는 행정을 만들었다.</p></li>
+    <li><span class="w">2020</span><h3>코로나 한복판, 진통제 대신 백신을</h3><p>떡볶이집 사장님이 강사가 됐다. 그리고 신청주의의 한계를 고백했다.</p></li>
+    <li><span class="w">2024</span><h3>1,547명의 서명, 그리고 ‘우리는 성공했지만, 실패했다’</h3><p>법이 없어 수수료 구조는 남았다. 그래서 레시피의 결론은 규칙이다.</p></li>
+  </ol>
+</section>
+
+<section class="chap" id="jing">
+  <h2><small>징비록 · 실패를 기록해야 겸손해진다</small>실패와 배움</h2>
+  <table class="jing">
+    <thead><tr><th>시기</th><th>실패</th><th>배움</th></tr></thead>
+    <tbody>
+      <tr><td>1992</td><td>대선 때 돕지 못했다</td><td>“1992년은 내게 마음의 빚처럼 남아있다.”</td></tr>
+      <tr><td>1994–95</td><td>막글터가 문을 닫았다</td><td>“지금도 찾을 수만 있다면 그 글들을 찾고 싶다.”</td></tr>
+      <tr><td>2003</td><td>대통령 PI팀이 해체됐다</td><td>공공캠페인으로 방향을 틀었다</td></tr>
+      <tr><td>2008–11</td><td>창업 뒤 경쟁 PT에서 잇달아 졌다</td><td>“자꾸 문제를 밖에서 찾게 되면 거꾸로 통제력을 잃게 된다.”</td></tr>
+      <tr><td>2012–13</td><td>제돌이 방류에 비판이 쏟아졌다</td><td>“언론과 여론을 다루고 시정을 이끌어가는 요령에 대해 많은 것을 배울 수 있었다.”</td></tr>
+      <tr><td>2017–</td><td>조례라는 대못을 박지 못했다. 디지털 시민시장실의 현황판이 철거됐다</td><td>“법 없이 만든 것은 법 없이 사라진다.”</td></tr>
+      <tr><td>2020–22</td><td>신청주의에 머물러 가장 어려운 사장님을 놓쳤다</td><td>“우리는 결국 이미 ‘생존 가능한 계층’만 도운 것이다.”</td></tr>
+      <tr><td>2023–25</td><td>서명 뒤에도 수수료 구조는 그대로였다</td><td>“호소는 휘발된다. 구조는 남는다.”</td></tr>
+      <tr><td>종합</td><td>15년의 다섯 교훈</td><td>“뜸. 법. 규칙. 발견. 사람.”</td></tr>
+    </tbody>
+  </table>
+</section>
+
+<section class="chap" id="quotes">
+  <h2><small>원문 그대로</small>직접 쓴 문장</h2>
+  <div class="quotes">
+    <h3>정체성 · 질문</h3>
+    <figure><blockquote>나는 질문의 힘을 믿는 사람이다.</blockquote><figcaption>『72년생 김현성의 물음』</figcaption></figure>
+    <figure><blockquote>결국 마케팅은 ‘왜?’라는 질문에서 출발한다.</blockquote><figcaption>『72년생 김현성의 물음』</figcaption></figure>
+    <figure><blockquote>그저 물음표 하나 들고 골목을 돌아다닌 사람이다.</blockquote><figcaption>『소상공인을 버린 AI』</figcaption></figure>
+    <h3>프레임 · 인사이트</h3>
+    <figure><blockquote>‘하지 마라’는 것보다 ‘좋은 일이니 같이 하자’는 것이 더 어렵기 마련이다.</blockquote><figcaption>『72년생 김현성의 물음』</figcaption></figure>
+    <figure><blockquote>최악의 대응은 그 공격을 반복하면서 방어하는 것이다.</blockquote><figcaption>『72년생 김현성의 물음』</figcaption></figure>
+    <h3>넛지 · 캠페인</h3>
+    <figure><blockquote>기술이 사람을 오라 가라 해서는 안 된다. 기술이 사람에게 가야 한다.</blockquote><figcaption>『소상공인을 버린 AI』</figcaption></figure>
+    <h3>경청 · 발견</h3>
+    <figure><blockquote>행정은 연결할 뿐 그 위에서 무엇을 느낄지는 시민의 몫이다.</blockquote><figcaption>『소상공인을 버린 AI』</figcaption></figure>
+    <h3>규칙 · 징비</h3>
+    <figure><blockquote>눈에 보이는 불은 물로 끈다. 세상의 불은 규칙으로 끈다.</blockquote><figcaption>『소상공인을 버린 AI』</figcaption></figure>
+    <figure><blockquote>정책은 3년을 가지만, 법은 10년을 간다.</blockquote><figcaption>『소상공인을 버린 AI』</figcaption></figure>
+    <figure><blockquote>숫자는 잊히고 사람은 남는다.</blockquote><figcaption>『소상공인을 버린 AI』</figcaption></figure>
+    <figure><blockquote>연결은 사치가 아니다. 복지이자, 생존이다.</blockquote><figcaption>『소상공인을 버린 AI』</figcaption></figure>
+  </div>
+</section>
+
+<footer>
+  <div class="sig">뜻과 땀으로 짓는 <em>때</em></div>
+  <p>뜻땀때 스튜디오 · © 2026 김현성</p>
+</footer>
+</div>
+</body>
+</html>
