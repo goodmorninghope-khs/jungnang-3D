@@ -24,3 +24,13 @@ data.js 의 D 배열만 고치면 됩니다. 저장소에 올리면 Railway가 �
 ## 시장·명소와 중랑동행길 (data.js 아래쪽)
 - POI: 전통시장(k:'market')과 명소(k:'place'). 위치는 근사치입니다. 시장을 누르면 반경 1㎞ 안 정비사업과 계획 세대 합계가, 사업을 누르면 가까운 시장·명소·동행길까지의 거리가 선으로 이어집니다.
 - TRAIL: 중랑동행길 21㎞ 구간. s: done 이미 걷는 길 / fix 정비 중·예정 / plan 새로 이을 길(2029 목표). 노선은 보도를 바탕으로 한 도식이라, 구청 확정 노선을 받으면 좌표(p)만 바꾸면 됩니다.
+
+## 연계 (밸류체인)
+
+이 저장소는 [policy-media-desk](https://github.com/goodmorninghope-khs/policy-media-desk) 밸류체인의 **④ 정책화 (시각 자료)** 고리다. 상태: 제안 (발행인 확인 후 실제로 이으면 '연계'로 바꾼다).
+
+- 받음: ④ 주거환경 공약에 닿는 신호
+- 넘김: 정비지도 3D → 침의 시각 자료
+- 넘길 때는 출처 지면(지면명·호수·날짜·링크)과 '닿는 공약'을 붙이고, 침은 의견으로 남긴다. 결정은 받는 고리의 책임자가 한다.
+
+전체 사슬: [references/value-chain.md](https://github.com/goodmorninghope-khs/policy-media-desk/blob/main/references/value-chain.md)
